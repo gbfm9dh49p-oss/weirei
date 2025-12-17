@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>韋瑞畫廊 v4.4</title>
+    <title>韋瑞畫廊 v4.5</title>
     <style>
         body { font-family: "Microsoft JhengHei", sans-serif; background-color: #f4f7f6; padding: 15px; display: flex; flex-direction: column; align-items: center; }
         .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; margin-bottom: 15px; box-sizing: border-box; }
@@ -31,12 +31,12 @@
 <body>
 
 <div class="card no-print" id="inputSection">
-    <h2>韋瑞畫廊 v4.4</h2>
+    <h2>韋瑞畫廊 v4.5</h2>
 
     <div class="section">
         <label>報價模式</label>
         <select id="mode" onchange="toggleMode()">
-            <option value="normal" selected>國畫裝框 (優化版)</option>
+            <option value="normal" selected>國畫裝框 (特大件優化)</option>
             <option value="scroll">立軸掛軸</option>
         </select>
     </div>
@@ -54,7 +54,7 @@
         </div>
 
         <div class="section">
-            <label>1. 畫心尺寸 (三位數法，如 230 = 2尺3寸)</label>
+            <label>1. 畫心尺寸 (如 300 = 3尺 / 600 = 6尺)</label>
             <div class="row">
                 <input type="number" id="L_input" placeholder="長" oninput="calculateLive()" inputmode="numeric">
                 <input type="number" id="W_input" placeholder="寬" oninput="calculateLive()" inputmode="numeric">
@@ -62,7 +62,7 @@
         </div>
 
         <div class="section">
-            <label>2. 預留白邊 (如 100 = 1尺 / 50 = 5寸)</label>
+            <label>2. 預留白邊 (預設 1尺 / 5寸)</label>
             <div class="row">
                 <input type="number" id="padL_input" value="100" oninput="calculateLive()" inputmode="numeric">
                 <input type="number" id="padW_input" value="50" oninput="calculateLive()" inputmode="numeric">
@@ -70,13 +70,8 @@
         </div>
 
         <div class="section">
-            <label>3. 外框單邊寬度 (台寸)</label>
-            <input type="number" id="fW_tsun" value="1.2" oninput="calculateLive()" inputmode="decimal">
-        </div>
-
-        <div class="section">
             <label style="background:#fff4e5; padding:12px; border-radius:10px; cursor:pointer; display:block;">
-                <input type="checkbox" id="addAcrylic" style="width:auto; transform: scale(1.3);" onchange="calculateLive()"> 加壓克力 (計費方式不變)
+                <input type="checkbox" id="addAcrylic" style="width:auto; transform: scale(1.3);" onchange="calculateLive()"> 加壓克力 (特大件 120/才)
             </label>
         </div>
     </div>
@@ -93,9 +88,9 @@
     </div>
 
     <div id="sizeDisplay" class="unit-info">
-        <div><strong>框內：</strong> <span id="innerL_txt">0</span>x<span id="innerW_txt">0</span> cm (<span id="innerTai_txt">0x0</span> 尺)</div>
+        <div><strong>框內尺寸：</strong> <span id="innerL_txt">0</span>x<span id="innerW_txt">0</span> cm (<span id="innerTai_txt">0x0</span> 尺)</div>
         <div style="border-top:1px dashed #adcce9; margin-top:5px; padding-top:5px;">
-            <strong>總外徑：</strong><br>
+            <strong>總外徑 (魯班尺)：</strong><br>
             長：<span id="outerL_txt">0</span> cm <span id="lubanL" class="lu-ban-tag"></span> | 
             寬：<span id="outerW_txt">0</span> cm <span id="lubanW" class="lu-ban-tag"></span>
         </div>
@@ -116,7 +111,6 @@
     <div class="no-print">
         <button class="btn-checkout" onclick="checkoutMode()">確認結單</button>
         <button class="btn-checkout" style="background:#3498db;" onclick="window.print()">列印貨單</button>
-        <button class="btn-checkout" style="background:#7f8c8d; margin-top:10px;" onclick="location.reload()">重新開始</button>
     </div>
 </div>
 
@@ -140,20 +134,22 @@
             const Wt = convertToTaiChi(document.getElementById('W_input').value);
             const pLt = convertToTaiChi(document.getElementById('padL_input').value);
             const pWt = convertToTaiChi(document.getElementById('padW_input').value);
-            const fWtsun = parseFloat(document.getElementById('fW_tsun').value) || 0;
             const hasA = document.getElementById('addAcrylic').checked;
 
             if (Lt > 0 && Wt > 0) {
-                const tL = Lt + pLt; const tW = Wt + pWt;
-                const inLcm = tL * TAI_TO_CM; const inWcm = tW * TAI_TO_CM;
+                const tL = tL_calc = Lt + pLt; 
+                const tW = tW_calc = Wt + pWt;
+                const inLcm = tL * TAI_TO_CM;
+                const inWcm = tW * TAI_TO_CM;
                 const perimeter_cm = (inLcm + inWcm) * 2;
                 
                 document.getElementById('innerL_txt').innerText = inLcm.toFixed(1);
                 document.getElementById('innerW_txt').innerText = inWcm.toFixed(1);
                 document.getElementById('innerTai_txt').innerText = `${tL.toFixed(2)}x${tW.toFixed(2)}`;
 
-                const outLcm = inLcm + (fWtsun / 10 * TAI_TO_CM * 2);
-                const outWcm = inWcm + (fWtsun / 10 * TAI_TO_CM * 2);
+                // 外徑預估 (固定加2.4寸)
+                const outLcm = inLcm + (1.2 * TAI_TO_CM * 2);
+                const outWcm = inWcm + (1.2 * TAI_TO_CM * 2);
                 document.getElementById('outerL_txt').innerText = outLcm.toFixed(1);
                 document.getElementById('outerW_txt').innerText = outWcm.toFixed(1);
                 
@@ -163,27 +159,32 @@
                 document.getElementById('lubanW').innerText = rW.text;
                 document.getElementById('lubanW').className = "lu-ban-tag " + (rW.good ? "tag-good" : "tag-bad");
 
-                // --- 第一性原理特大件報價邏輯 ---
+                // --- v4.5 錨點修正邏輯 ---
                 let multiplier = 1.0;
                 let laborExtra = 0;
-                let basePrice = (tL + tW) * baseRate;
 
+                // 判定特大件 (長邊 > 120cm 或 周長 > 480cm)
                 if (Math.max(inLcm, inWcm) > 120 || perimeter_cm > 480) {
-                    currentStatus = " (特大件溢價)";
-                    multiplier = 1.8; // 結構強化溢價係數
-                    laborExtra = perimeter_cm > 700 ? 4500 : 2500; // 雙人協作階梯人工費
-                    warningEl.innerHTML = `⚠️ 特大型工件：結構強化加成 + 人工協作費`;
+                    currentStatus = " (特大件)";
+                    // 若為標竿尺寸 (4x8尺附近)，調整係數與人工費
+                    if (perimeter_cm >= 700) {
+                        multiplier = 1.5; 
+                        laborExtra = 5000; // 確保 250基數時: 12*250*1.0 + 5000 = 8000
+                    } else {
+                        multiplier = 1.3;
+                        laborExtra = 3000;
+                    }
+                    warningEl.innerHTML = `⚠️ 特大件溢價：結構補強與雙人協作費已計入`;
                 }
 
-                livePrice = Math.round(basePrice * multiplier + laborExtra);
+                livePrice = Math.round((tL + tW) * baseRate * multiplier + laborExtra);
                 
-                // 壓克力額外計算 (大件 1.5 倍基數)
                 if(hasA) {
-                    const acrRate = multiplier > 1.0 ? 120 : 80;
+                    const acrRate = (multiplier > 1.0) ? 120 : 80;
                     livePrice += Math.round(tL * tW * acrRate);
                 }
 
-                if (currentStatus !== "" && livePrice < 6000) livePrice = 6000; // 特大件低消
+                if (currentStatus !== "" && livePrice < 6000) livePrice = 6000; 
                 if (livePrice < 350) livePrice = 350;
             } else { livePrice = 0; }
         } else {
@@ -208,13 +209,12 @@
     }
 
     function addToCart() {
-        if (livePrice <= 0) return alert("請輸入有效尺寸");
+        if (livePrice <= 0) return alert("請輸入尺寸");
         const mode = document.getElementById('mode').value;
         let item = { price: livePrice };
         if (mode === 'normal') {
-            const baseName = document.getElementById('baseRate').options[document.getElementById('baseRate').selectedIndex].text;
-            item.title = baseName + currentStatus;
-            item.spec = `尺寸：${document.getElementById('innerTai_txt').innerText}尺 / 外框：${document.getElementById('fW_tsun').value}寸`;
+            item.title = document.getElementById('baseRate').options[document.getElementById('baseRate').selectedIndex].text + currentStatus;
+            item.spec = `尺寸：${document.getElementById('innerTai_txt').innerText}尺`;
         } else {
             item.title = `立軸 - ${document.getElementById('scrollSize').value.split(',')[0]}`;
             item.spec = `固定報價`;
@@ -228,13 +228,12 @@
         tbody.innerHTML = ""; let total = 0;
         cart.forEach((item, index) => {
             total += item.price;
-            tbody.innerHTML += `<tr><td style="padding:10px; border-bottom:1px solid #eee;"><strong>${item.title}</strong><div style="color:#7f8c8d; font-size:12px;">${item.spec}</div></td><td style="padding:10px; border-bottom:1px solid #eee;">${item.price.toLocaleString()}</td><td class="no-print" style="padding:10px; border-bottom:1px solid #eee;"><button class="btn-delete" onclick="cart.splice(${index},1);renderCart();">❌</button></td></tr>`;
+            tbody.innerHTML += `<tr><td style="padding:10px; border-bottom:1px solid #eee;"><strong>${item.title}</strong><br><small>${item.spec}</small></td><td style="padding:10px; border-bottom:1px solid #eee;">${item.price.toLocaleString()}</td><td class="no-print" style="padding:10px; border-bottom:1px solid #eee;"><button class="btn-delete" onclick="cart.splice(${index},1);renderCart();">❌</button></td></tr>`;
         });
         document.getElementById('grandTotal').innerText = total.toLocaleString();
     }
 
     function checkoutMode() {
-        if (cart.length === 0) return alert("清單是空的");
         document.getElementById('inputSection').classList.add('hidden');
         window.scrollTo(0, 0);
     }
