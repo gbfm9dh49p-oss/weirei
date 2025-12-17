@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>韋瑞畫廊 v5.0</title>
+    <title>韋瑞畫廊 v5.1</title>
     <style>
         body { font-family: "Microsoft JhengHei", sans-serif; background-color: #f4f7f6; padding: 15px; display: flex; flex-direction: column; align-items: center; }
         .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 550px; margin-bottom: 15px; box-sizing: border-box; }
@@ -18,6 +18,7 @@
         .warning-text { color: #e74c3c; font-weight: bold; font-size: 13px; margin-top: 5px; display: block; }
         .btn-add { background-color: #27ae60; color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; }
         .btn-checkout { background-color: #2c3e50; color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-delete { background: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; font-size: 14px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
         .info-item { line-height: 1.8; color: #34495e; }
         .cart-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
@@ -30,7 +31,7 @@
 <body>
 
 <div class="card no-print" id="inputSection">
-    <h2>韋瑞畫廊 v5.0</h2>
+    <h2>韋瑞畫廊 v5.1</h2>
 
     <div class="section" style="background: #fcfcfc; border: 1px solid #eee; padding: 15px; border-radius: 10px;">
         <label>👤 客戶基本資料</label>
@@ -47,7 +48,7 @@
     <div class="section">
         <label>報價模式</label>
         <select id="mode" onchange="toggleMode()">
-            <option value="normal" selected>國畫裝框 (特大件優化)</option>
+            <option value="normal">國畫裝框 (特大件優化)</option>
             <option value="board">國畫裱板 (可加L型框)</option>
             <option value="scroll">立軸掛軸</option>
         </select>
@@ -65,12 +66,12 @@
             </select>
         </div>
         <div class="row">
-            <div class="section"><label>畫心長 (三位數)</label><input type="number" id="L_input" placeholder="如 300" oninput="calculateLive()" inputmode="numeric"></div>
-            <div class="section"><label>畫心寬 (三位數)</label><input type="number" id="W_input" placeholder="如 600" oninput="calculateLive()" inputmode="numeric"></div>
+            <div class="section"><label>長 (三位數)</label><input type="number" id="L_input" placeholder="如 300" oninput="calculateLive()" inputmode="numeric"></div>
+            <div class="section"><label>寬 (三位數)</label><input type="number" id="W_input" placeholder="如 600" oninput="calculateLive()" inputmode="numeric"></div>
         </div>
         <div class="row">
-            <div class="section"><label>預留長邊 (寸)</label><input type="number" id="padL_input" value="100" oninput="calculateLive()" inputmode="numeric"></div>
-            <div class="section"><label>預留短邊 (寸)</label><input type="number" id="padW_input" value="50" oninput="calculateLive()" inputmode="numeric"></div>
+            <div class="section"><label>預留長邊</label><input type="number" id="padL_input" value="100" oninput="calculateLive()" inputmode="numeric"></div>
+            <div class="section"><label>預留短邊</label><input type="number" id="padW_input" value="50" oninput="calculateLive()" inputmode="numeric"></div>
         </div>
         
         <div id="acrylic-box">
@@ -99,7 +100,7 @@
     </div>
 
     <div id="sizeDisplay" class="unit-info">
-        <div><strong>框內尺寸：</strong> <span id="innerL_txt">0</span>x<span id="innerW_txt">0</span> cm (<span id="innerTai_txt">0x0</span> 尺)</div>
+        <div><strong>尺寸：</strong> <span id="innerL_txt">0</span>x<span id="innerW_txt">0</span> cm (<span id="innerTai_txt">0x0</span> 尺)</div>
         <div id="boardDetail" style="display:none; color: #d35400; font-weight: bold; border-top: 1px dashed #fab1a0; margin-top: 5px; padding-top: 5px;">
             換算英吋：<span id="inch_txt">0</span>"<br>
             裱板面積：<span id="cai_txt">0</span> 才
@@ -133,7 +134,7 @@
 
 <script>
     const TAI_TO_CM = 30.3;
-    const TAI_TO_INCH = 11.93; // 1台尺 ≒ 11.93 英吋
+    const TAI_TO_INCH = 11.93;
     let cart = [];
     let livePrice = 0;
     let currentStatus = "";
@@ -176,25 +177,18 @@
                     }
                     livePrice = Math.round((tL + tW) * baseRate * multiplier + laborExtra);
                     if(document.getElementById('addAcrylic').checked) livePrice += Math.round(tL * tW * (multiplier > 1.0 ? 120 : 80));
-                    if (currentStatus !== "" && livePrice < 6000) livePrice = 6000;
                 } else {
-                    // --- 國畫裱板邏輯 ---
-                    // 1. 基礎裱板費: (長吋 * 寬吋) / 144 * 80
-                    const L_inch = tL * TAI_TO_INCH;
-                    const W_inch = tW * TAI_TO_INCH;
+                    const L_inch = tL * TAI_TO_INCH; const W_inch = tW * TAI_TO_INCH;
                     const totalCai = (L_inch * W_inch) / 144;
-                    let boardBase = Math.round(totalCai * 80);
-                    
-                    // 2. L型框費: (長吋 + 寬吋) * 基數
-                    const lBase = parseInt(document.getElementById('lFrameType').value);
-                    let lFramePrice = Math.round((L_inch + W_inch) * lBase);
+                    const boardBase = Math.round(totalCai * 80);
+                    const lBaseValue = parseInt(document.getElementById('lFrameType').value);
+                    const lFramePrice = Math.round((L_inch + W_inch) * lBaseValue);
                     
                     document.getElementById('inch_txt').innerText = `${L_inch.toFixed(1)}" x ${W_inch.toFixed(1)}"`;
                     document.getElementById('cai_txt').innerText = totalCai.toFixed(2);
-                    
                     livePrice = boardBase + lFramePrice;
-                    if (livePrice < 350) livePrice = 350;
                 }
+                if (livePrice < 350) livePrice = 350;
             } else { livePrice = 0; }
         } else {
             livePrice = parseInt(document.getElementById('scrollSize').value.split(',')[1]);
@@ -216,14 +210,22 @@
     function addToCart() {
         if (livePrice <= 0) return alert("請輸入尺寸");
         const mode = document.getElementById('mode').value;
-        let title = "";
-        if(mode === 'normal') title = document.getElementById('baseRate').options[document.getElementById('baseRate').selectedIndex].text + currentStatus;
-        else if(mode === 'board') {
+        let title = ""; let spec = "";
+        
+        if(mode === 'normal') {
+            title = document.getElementById('baseRate').options[document.getElementById('baseRate').selectedIndex].text + currentStatus;
+            spec = `尺寸：${document.getElementById('innerTai_txt').innerText}尺`;
+        } else if(mode === 'board') {
+            const lRate = parseInt(document.getElementById('lFrameType').value);
             const lName = document.getElementById('lFrameType').options[document.getElementById('lFrameType').selectedIndex].text;
-            title = "國畫裱板" + (lBase > 0 ? ` (+${lName})` : "");
-        } else title = `立軸 - ${document.getElementById('scrollSize').value.split(',')[0]}`;
+            title = "國畫裱板" + (lRate > 0 ? ` (+${lName})` : "");
+            spec = `尺寸：${document.getElementById('innerTai_txt').innerText}尺`;
+        } else {
+            title = `立軸 - ${document.getElementById('scrollSize').value.split(',')[0]}`;
+            spec = `固定規格`;
+        }
 
-        cart.push({ title, price: livePrice, spec: mode === 'scroll' ? "固定規格" : `尺寸：${document.getElementById('innerTai_txt').innerText}尺` });
+        cart.push({ title, price: livePrice, spec });
         renderCart();
     }
 
