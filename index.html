@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>韋瑞畫廊 v4.6</title>
+    <title>韋瑞畫廊 v4.8</title>
     <style>
         body { font-family: "Microsoft JhengHei", sans-serif; background-color: #f4f7f6; padding: 15px; display: flex; flex-direction: column; align-items: center; }
-        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; margin-bottom: 15px; box-sizing: border-box; transition: 0.3s; }
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 550px; margin-bottom: 15px; box-sizing: border-box; }
         h2, h3 { text-align: center; color: #2c3e50; margin-top: 0; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
         .section { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: #34495e; font-size: 15px; }
@@ -22,16 +22,47 @@
         .btn-add { background-color: #27ae60; color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; }
         .btn-checkout { background-color: #2c3e50; color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .btn-delete { background: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+        
+        /* 列印專屬資訊欄位 */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; font-size: 14px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .info-item { line-height: 1.8; color: #34495e; }
+        .info-item b { color: #2c3e50; }
+
         .cart-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
         .cart-total { text-align: right; font-size: 22px; font-weight: bold; color: #c0392b; margin-top: 15px; padding: 10px; border-top: 2px solid #2c3e50; }
         .hidden { display: none !important; }
-        @media print { .no-print { display: none !important; } .card { box-shadow: none; border: none; width: 100%; } body { background: #fff; padding: 0; } }
+        
+        @media print { 
+            .no-print { display: none !important; } 
+            .card { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; } 
+            body { background: #fff; padding: 0; } 
+            .info-grid { border-bottom: 2px solid #000; }
+        }
     </style>
 </head>
 <body>
 
 <div class="card no-print" id="inputSection">
-    <h2>韋瑞畫廊 v4.6</h2>
+    <h2>韋瑞畫廊 v4.8</h2>
+
+    <div class="section" style="background: #fcfcfc; border: 1px solid #eee; padding: 15px; border-radius: 10px;">
+        <label>👤 客戶基本資料</label>
+        <div class="row" style="margin-bottom: 10px;">
+            <input type="text" id="cust_name" placeholder="客戶姓名">
+            <input type="tel" id="cust_phone" placeholder="聯絡電話">
+        </div>
+        <input type="text" id="cust_addr" placeholder="送貨地址" style="margin-bottom: 10px;">
+        <div class="row">
+            <div>
+                <label style="font-size: 12px;">收件日期</label>
+                <input type="date" id="date_receive">
+            </div>
+            <div>
+                <label style="font-size: 12px;">預計交件 (預設2週)</label>
+                <input type="date" id="date_deliver">
+            </div>
+        </div>
+    </div>
 
     <div class="section">
         <label>報價模式</label>
@@ -52,23 +83,26 @@
                 <option value="200">6分特選手工框 (200)</option>
             </select>
         </div>
-
-        <div class="section">
-            <label>1. 畫心尺寸 (如 300 = 3尺 / 600 = 6尺)</label>
-            <div class="row">
-                <input type="number" id="L_input" placeholder="長" oninput="calculateLive()" inputmode="numeric">
-                <input type="number" id="W_input" placeholder="寬" oninput="calculateLive()" inputmode="numeric">
+        <div class="row">
+            <div class="section">
+                <label>畫心長 (三位數)</label>
+                <input type="number" id="L_input" placeholder="如 300" oninput="calculateLive()" inputmode="numeric">
+            </div>
+            <div class="section">
+                <label>畫心寬 (三位數)</label>
+                <input type="number" id="W_input" placeholder="如 600" oninput="calculateLive()" inputmode="numeric">
             </div>
         </div>
-
-        <div class="section">
-            <label>2. 預留白邊 (預設 1尺 / 5寸)</label>
-            <div class="row">
+        <div class="row">
+            <div class="section">
+                <label>預留長邊</label>
                 <input type="number" id="padL_input" value="100" oninput="calculateLive()" inputmode="numeric">
+            </div>
+            <div class="section">
+                <label>預留短邊</label>
                 <input type="number" id="padW_input" value="50" oninput="calculateLive()" inputmode="numeric">
             </div>
         </div>
-
         <div class="section">
             <label style="background:#fff4e5; padding:12px; border-radius:10px; cursor:pointer; display:block;">
                 <input type="checkbox" id="addAcrylic" style="width:auto; transform: scale(1.3);" onchange="calculateLive()"> 加壓克力 (特大件 120/才)
@@ -89,11 +123,6 @@
 
     <div id="sizeDisplay" class="unit-info">
         <div><strong>框內尺寸：</strong> <span id="innerL_txt">0</span>x<span id="innerW_txt">0</span> cm (<span id="innerTai_txt">0x0</span> 尺)</div>
-        <div style="border-top:1px dashed #adcce9; margin-top:5px; padding-top:5px;">
-            <strong>總外徑 (魯班尺)：</strong><br>
-            長：<span id="outerL_txt">0</span> cm <span id="lubanL" class="lu-ban-tag"></span> | 
-            寬：<span id="outerW_txt">0</span> cm <span id="lubanW" class="lu-ban-tag"></span>
-        </div>
     </div>
 
     <div class="live-price-box">
@@ -106,14 +135,22 @@
 
 <div class="card" id="cartSection">
     <h3>訂單報價單</h3>
+    
+    <div id="printInfo" class="info-grid">
+        <div class="info-item"><b>客戶姓名：</b><span id="p_name">---</span></div>
+        <div class="info-item"><b>聯絡電話：</b><span id="p_phone">---</span></div>
+        <div class="info-item" style="grid-column: span 2;"><b>送貨地址：</b><span id="p_addr">---</span></div>
+        <div class="info-item"><b>收件日期：</b><span id="p_dateR">---</span></div>
+        <div class="info-item"><b>預計交件：</b><span id="p_dateD">---</span></div>
+    </div>
+
     <table class="cart-table"><tbody id="cartItems"></tbody></table>
     <div class="cart-total">總計金額：NT$ <span id="grandTotal">0</span></div>
     
     <div id="actionButtons" class="no-print">
-        <button id="confirmBtn" class="btn-checkout" onclick="checkoutMode()">確認結單 (隱藏輸入)</button>
-        <button id="backBtn" class="btn-checkout hidden" style="background:#f39c12;" onclick="backToEdit()">返回修改內容</button>
+        <button id="confirmBtn" class="btn-checkout" onclick="checkoutMode()">確認結單 (產生工單)</button>
+        <button id="resetBtn" class="btn-checkout hidden" style="background:#f39c12;" onclick="resetAndBack()">返回並清空內容</button>
         <button class="btn-checkout" style="background:#3498db;" onclick="window.print()">列印貨單</button>
-        <button class="btn-checkout" style="background:#7f8c8d; margin-top:10px;" onclick="location.reload()">重新開始</button>
     </div>
 </div>
 
@@ -122,6 +159,16 @@
     let cart = [];
     let livePrice = 0;
     let currentStatus = "";
+
+    // 初始化日期：設定今天與兩週後
+    function initDates() {
+        const today = new Date();
+        const twoWeeksLater = new Date();
+        twoWeeksLater.setDate(today.getDate() + 14);
+
+        document.getElementById('date_receive').value = today.toISOString().split('T')[0];
+        document.getElementById('date_deliver').value = twoWeeksLater.toISOString().split('T')[0];
+    }
 
     function convertToTaiChi(val) { return val ? parseFloat(val) / 100 : 0; }
 
@@ -148,17 +195,6 @@
                 document.getElementById('innerW_txt').innerText = inWcm.toFixed(1);
                 document.getElementById('innerTai_txt').innerText = `${tL.toFixed(2)}x${tW.toFixed(2)}`;
 
-                const outLcm = inLcm + (2.4 * TAI_TO_CM);
-                const outWcm = inWcm + (2.4 * TAI_TO_CM);
-                document.getElementById('outerL_txt').innerText = outLcm.toFixed(1);
-                document.getElementById('outerW_txt').innerText = outWcm.toFixed(1);
-                
-                const rL = checkLuBan(outLcm); const rW = checkLuBan(outWcm);
-                document.getElementById('lubanL').innerText = rL.text;
-                document.getElementById('lubanL').className = "lu-ban-tag " + (rL.good ? "tag-good" : "tag-bad");
-                document.getElementById('lubanW').innerText = rW.text;
-                document.getElementById('lubanW').className = "lu-ban-tag " + (rW.good ? "tag-good" : "tag-bad");
-
                 let multiplier = 1.0;
                 let laborExtra = 0;
 
@@ -166,7 +202,7 @@
                     currentStatus = " (特大件)";
                     if (perimeter_cm >= 700) { multiplier = 1.5; laborExtra = 5000; }
                     else { multiplier = 1.3; laborExtra = 3000; }
-                    warningEl.innerHTML = `⚠️ 特大件溢價：結構補強與雙人協作費已計入`;
+                    warningEl.innerHTML = `⚠️ 特大件溢價已計入`;
                 }
 
                 livePrice = Math.round((tL + tW) * baseRate * multiplier + laborExtra);
@@ -217,19 +253,42 @@
 
     function checkoutMode() {
         if (cart.length === 0) return alert("清單是空的");
+        
+        // 將輸入的資料填入預覽單據
+        document.getElementById('p_name').innerText = document.getElementById('cust_name').value || "未填寫";
+        document.getElementById('p_phone').innerText = document.getElementById('cust_phone').value || "未填寫";
+        document.getElementById('p_addr').innerText = document.getElementById('cust_addr').value || "未填寫";
+        document.getElementById('p_dateR').innerText = document.getElementById('date_receive').value;
+        document.getElementById('p_dateD').innerText = document.getElementById('date_deliver').value;
+
         document.getElementById('inputSection').classList.add('hidden');
         document.getElementById('confirmBtn').classList.add('hidden');
-        document.getElementById('backBtn').classList.remove('hidden');
+        document.getElementById('resetBtn').classList.remove('hidden');
         window.scrollTo(0, 0);
     }
 
-    function backToEdit() {
+    function resetAndBack() {
+        if(!confirm("確定要清單並開始新訂單嗎？")) return;
+        cart = [];
+        renderCart();
+        document.getElementById('cust_name').value = "";
+        document.getElementById('cust_phone').value = "";
+        document.getElementById('cust_addr').value = "";
+        document.getElementById('L_input').value = "";
+        document.getElementById('W_input').value = "";
+        initDates();
+        calculateLive();
+
         document.getElementById('inputSection').classList.remove('hidden');
         document.getElementById('confirmBtn').classList.remove('hidden');
-        document.getElementById('backBtn').classList.add('hidden');
+        document.getElementById('resetBtn').classList.add('hidden');
+        window.scrollTo(0, 0);
     }
 
-    window.onload = function() { calculateLive(); };
+    window.onload = function() { 
+        initDates();
+        calculateLive(); 
+    };
 </script>
 </body>
 </html>
