@@ -28,18 +28,21 @@
 <body>
 
 <div class="card no-print">
-    <h3>👤 客戶資訊</h3>
-    <div class="row">
-        <input type="text" id="cust_name" placeholder="客戶姓名">
-        <input type="tel" id="cust_phone" placeholder="電話">
-    </div>
-    <div class="row" style="margin-top:10px;">
-        <div style="flex:1;"><label>收件日期</label><input type="date" id="date_receive"></div>
-        <div style="flex:1;"><label>預計交件</label><input type="date" id="date_deliver"></div>
+    <h2>韋瑞畫廊 v7.2</h2>
+    <div class="section" style="background: #fcfcfc; border: 1px solid #eee; padding: 15px; border-radius: 10px;">
+        <label>👤 客戶基本資料</label>
+        <div class="row" style="margin-bottom: 10px;">
+            <input type="text" id="cust_name" placeholder="客戶姓名">
+            <input type="tel" id="cust_phone" placeholder="聯絡電話">
+        </div>
+        <div class="row">
+            <div style="flex:1;"><label style="font-size:12px;">收件日期</label><input type="date" id="date_receive"></div>
+            <div style="flex:1;"><label style="font-size:12px;">預計交件</label><input type="date" id="date_deliver"></div>
+        </div>
     </div>
 </div>
 
-<div class="card no-print">
+<div class="card no-print" id="inputSection">
     <h3>💰 報價計算</h3>
     <div class="section">
         <label>報價模式</label>
@@ -52,8 +55,8 @@
     </div>
 
     <div class="row">
-        <div style="flex:1;"><label>長 (三位數)</label><input type="number" id="L_in" oninput="runCalc()" inputmode="numeric" placeholder="如 300"></div>
-        <div style="flex:1;"><label>寬 (三位數)</label><input type="number" id="W_in" oninput="runCalc()" inputmode="numeric" placeholder="如 600"></div>
+        <div style="flex:1;"><label>畫心長 (三位數)</label><input type="number" id="L_in" oninput="runCalc()" inputmode="numeric" placeholder="如 300"></div>
+        <div style="flex:1;"><label>畫心寬 (三位數)</label><input type="number" id="W_in" oninput="runCalc()" inputmode="numeric" placeholder="如 600"></div>
     </div>
     <div class="row" style="margin-top:10px;">
         <div style="flex:1;"><label>預留長邊</label><input type="number" id="padL" value="100" oninput="runCalc()"></div>
@@ -79,7 +82,7 @@
             <option value="solid">立體框 (底板 + 框條)</option>
             <option value="inout">內外框 (底板 + 框條 + 內框)</option>
         </select>
-        <label style="margin-top:10px;">框條基數</label>
+        <label style="margin-top:10px;">框條選擇</label>
         <select id="oilFrameBase" onchange="runCalc()">
             <option value="20">6分框 (20)</option>
             <option value="25">寸半框 (25)</option>
@@ -101,6 +104,7 @@
     </div>
 
     <div id="scroll-options" class="option-group hidden">
+        <label>立軸規格</label>
         <select id="scrollSize" onchange="runCalc()">
             <option value="1000">小對開 (1000)</option>
             <option value="900">對開 (900)</option>
@@ -117,23 +121,31 @@
     <button class="btn-add" onclick="addItem()">＋ 加入訂單清單</button>
 </div>
 
-<div class="card">
-    <div id="printInfo" class="hidden" style="border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:10px;"></div>
-    <table style="width:100%;" id="cartTable"></table>
+<div class="card" id="cartSection">
+    <h3>📝 報價清單</h3>
+    <div id="printInfo" class="hidden" style="border-bottom:2px solid #000; padding-bottom:10px; margin-bottom:10px; font-size:14px;"></div>
+    <table style="width:100%; border-collapse: collapse;" id="cartTable"></table>
     <div style="text-align:right; font-size:22px; font-weight:bold; color:#c0392b; margin-top:15px; border-top:2px solid #2c3e50; padding-top:10px;">
-        總計：NT$ <span id="totalTxt">0</span>
+        總計金額：NT$ <span id="totalTxt">0</span>
     </div>
-    <button id="finalBtn" class="btn-checkout no-print" onclick="processCheckout()">確認結單</button>
-    <button class="btn-checkout no-print" style="background:#3498db;" onclick="window.print()">列印單據</button>
-    <button id="resetBtn" class="btn-checkout hidden no-print" style="background:#f39c12;" onclick="location.reload()">下一張新訂單</button>
+    <div class="no-print">
+        <button id="finalBtn" class="btn-checkout" onclick="processCheckout()">確認結單</button>
+        <button id="resetBtn" class="btn-checkout hidden" style="background:#f39c12;" onclick="location.reload()">下一張新訂單</button>
+        <button class="btn-checkout" style="background:#3498db;" onclick="window.print()">列印單據</button>
+    </div>
 </div>
 
 <div class="inv-panel no-print">
-    <h3>📦 庫存儀表板 (獨立建置中)</h3>
+    <h3>📦 庫存儀表板 (獨立記錄)</h3>
     <div id="invList"></div>
-    <div style="margin-top:10px; border-top:1px solid #444; padding-top:10px; display:flex; gap:5px;">
-        <select id="addType" style="background:#34495e; color:white; flex:1;"><option value="f1">1寸2框</option><option value="f2">小新B1</option><option value="a36">3X6壓克力</option><option value="a48">4X8壓克力</option></select>
-        <input type="number" id="addQty" placeholder="數量" style="width:70px;">
+    <div style="margin-top:10px; border-top:1px solid #555; padding-top:10px; display:flex; gap:5px;">
+        <select id="addType" style="background:#34495e; color:white; border:none; flex:1; padding:5px;">
+            <option value="f1">1寸2國畫框</option>
+            <option value="f2">小新B1</option>
+            <option value="a36">3X6壓克力</option>
+            <option value="a48">4X8壓克力</option>
+        </select>
+        <input type="number" id="addQty" placeholder="數量" style="width:70px; padding:5px;">
         <button onclick="handleRestock()" style="background:#27ae60; color:white; border:none; padding:5px 10px; border-radius:5px;">進貨</button>
     </div>
 </div>
@@ -144,8 +156,8 @@
     let cart = [];
     let currentPrice = 0;
 
-    // 庫存資料獨立存儲
-    let inv = JSON.parse(localStorage.getItem('weray_inv_standalone')) || {
+    // 庫存數據
+    let inv = JSON.parse(localStorage.getItem('weray_standalone_inv')) || {
         f1: { name: "1寸2國畫框", qty: 0, unit: "尺" },
         f2: { name: "小新Ｂ1", qty: 0, unit: "尺" },
         a36: { name: "壓克力 3X6", qty: 0, unit: "張" },
@@ -175,8 +187,7 @@
             let extra = (perim_cm >= 700) ? 5000 : ((perim_cm > 480) ? 3000 : 0);
             currentPrice = Math.round((tL + tW) * base * mult + extra);
             if(document.getElementById('addAcy').checked) currentPrice += Math.round(tL * tW * (mult > 1 ? 120 : 80));
-        } 
-        else if (mode === 'oil') {
+        } else if (mode === 'oil') {
             const type = document.getElementById('oilType').value;
             const base = parseInt(document.getElementById('oilFrameBase').value);
             let mult = (Lcm > 120 || perim_cm > 480) ? 1.8 : 1.0;
@@ -187,12 +198,10 @@
             if(document.getElementById('oilCloth').checked) currentPrice += Math.round((Linch + Winch) * 12);
             if(document.getElementById('oilAcy').checked) currentPrice += Math.round(cai * 80);
             if(document.getElementById('oilProtect').checked) currentPrice += Math.round(cai * 80);
-        }
-        else if (mode === 'board') {
-            const lBase = parseInt(document.getElementById('lFrameType').value);
-            currentPrice = Math.round(cai * 80) + Math.round((Linch + Winch) * lBase);
-        }
-        else {
+        } else if (mode === 'board') {
+            const lRate = parseInt(document.getElementById('lFrameType').value);
+            currentPrice = Math.round(cai * 80) + Math.round((Linch + Winch) * lRate);
+        } else {
             currentPrice = parseInt(document.getElementById('scrollSize').value);
         }
 
@@ -201,18 +210,18 @@
     }
 
     function toggleMode() {
-        const mode = document.getElementById('mode').value;
-        document.getElementById('normal-options').classList.toggle('hidden', mode !== 'normal');
-        document.getElementById('oil-options').classList.toggle('hidden', mode !== 'oil');
-        document.getElementById('board-options').classList.toggle('hidden', mode !== 'board');
-        document.getElementById('scroll-options').classList.toggle('hidden', mode !== 'scroll');
+        const m = document.getElementById('mode').value;
+        document.getElementById('normal-options').classList.toggle('hidden', m !== 'normal');
+        document.getElementById('oil-options').classList.toggle('hidden', m !== 'oil');
+        document.getElementById('board-options').classList.toggle('hidden', m !== 'board');
+        document.getElementById('scroll-options').classList.toggle('hidden', m !== 'scroll');
         runCalc();
     }
 
     function addItem() {
-        if(currentPrice <= 0) return;
-        const modeName = document.getElementById('mode').options[document.getElementById('mode').selectedIndex].text;
-        cart.push({ title: modeName, price: currentPrice, spec: document.getElementById('sizeDetail').innerText });
+        if(currentPrice <= 0) return alert("請輸入有效尺寸");
+        const mName = document.getElementById('mode').options[document.getElementById('mode').selectedIndex].text;
+        cart.push({ title: mName, price: currentPrice, spec: document.getElementById('sizeDetail').innerText });
         renderCart();
     }
 
@@ -221,7 +230,7 @@
         table.innerHTML = ""; let total = 0;
         cart.forEach((it, idx) => {
             total += it.price;
-            table.innerHTML += `<tr><td style="padding:8px; border-bottom:1px solid #eee;"><b>${it.title}</b><br><small>${it.spec}</small></td><td align="right">${it.price.toLocaleString()}</td><td align="right" class="no-print"><button onclick="cart.splice(${idx},1);renderCart()" style="color:red; background:none; border:none; cursor:pointer;">❌</button></td></tr>`;
+            table.innerHTML += `<tr><td style="padding:10px; border-bottom:1px solid #eee;"><b>${it.title}</b><br><small>${it.spec}</small></td><td align="right" style="padding:10px;">${it.price.toLocaleString()}</td><td align="right" class="no-print"><button onclick="cart.splice(${idx},1);renderCart();" style="color:red; background:none; border:none; cursor:pointer; font-size:18px;">❌</button></td></tr>`;
         });
         document.getElementById('totalTxt').innerText = total.toLocaleString();
     }
@@ -230,19 +239,18 @@
         if(cart.length === 0) return alert("清單為空");
         const name = document.getElementById('cust_name').value || "未填";
         const phone = document.getElementById('cust_phone').value || "未填";
-        document.getElementById('printInfo').innerHTML = `<b>客戶：</b>${name} | <b>電話：</b>${phone} | <b>收件：</b>${document.getElementById('date_receive').value}`;
+        document.getElementById('printInfo').innerHTML = `<b>客戶姓名：</b>${name} | <b>聯絡電話：</b>${phone}<br><b>收件日期：</b>${document.getElementById('date_receive').value} | <b>交件日期：</b>${document.getElementById('date_deliver').value}`;
         document.getElementById('printInfo').classList.remove('hidden');
         document.getElementById('finalBtn').classList.add('hidden');
         document.getElementById('resetBtn').classList.remove('hidden');
-        alert("確認結單完成。您可以列印單據了。");
+        window.scrollTo(0,0);
     }
 
-    // 庫存獨立操作
     function handleRestock() {
-        const key = document.getElementById('addType').value;
-        const val = parseFloat(document.getElementById('addQty').value) || 0;
-        inv[key].qty += val;
-        localStorage.setItem('weray_inv_standalone', JSON.stringify(inv));
+        const k = document.getElementById('addType').value;
+        const v = parseFloat(document.getElementById('addQty').value) || 0;
+        inv[k].qty += v;
+        localStorage.setItem('weray_standalone_inv', JSON.stringify(inv));
         renderInv();
     }
 
@@ -250,14 +258,14 @@
         const div = document.getElementById('invList');
         div.innerHTML = "";
         for(let k in inv) {
-            div.innerHTML += `<div style="display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px solid #444;"><span>${inv[k].name}</span><span>${inv[k].qty.toFixed(1)} ${inv[k].unit}</span></div>`;
+            div.innerHTML += `<div style="display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid #444;"><span>${inv[k].name}</span><span>${inv[k].qty.toFixed(1)} ${inv[k].unit}</span></div>`;
         }
     }
 
     window.onload = function() {
-        const today = new Date();
-        document.getElementById('date_receive').value = today.toISOString().split('T')[0];
-        const next = new Date(); next.setDate(today.getDate() + 14);
+        const d = new Date();
+        document.getElementById('date_receive').value = d.toISOString().split('T')[0];
+        const next = new Date(); next.setDate(d.getDate() + 14);
         document.getElementById('date_deliver').value = next.toISOString().split('T')[0];
         renderInv(); runCalc();
     };
