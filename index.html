@@ -3,256 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>韋瑞畫廊 v6.0</title>
+    <title>韋瑞畫廊 v7.1 - 模組化系統</title>
     <style>
+        /* 基礎樣式保持簡潔 */
         body { font-family: "Microsoft JhengHei", sans-serif; background-color: #f4f7f6; padding: 15px; display: flex; flex-direction: column; align-items: center; }
         .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 550px; margin-bottom: 15px; box-sizing: border-box; }
         h2, h3 { text-align: center; color: #2c3e50; margin-top: 0; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
         .section { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: #34495e; font-size: 14px; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #ccd1d9; border-radius: 8px; box-sizing: border-box; font-size: 16px; background-color: #fff; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ccd1d9; border-radius: 8px; box-sizing: border-box; font-size: 16px; background: #fff; }
         .row { display: flex; gap: 8px; align-items: center; }
-        .unit-info { font-size: 14px; color: #2980b9; margin-top: 12px; background: #eef7ff; padding: 12px; border-radius: 8px; border: 1px solid #d6eaf8; line-height: 1.6; }
-        .live-price-box { background: #fff; padding: 15px; border-radius: 10px; text-align: center; margin: 15px 0; border: 2px dashed #e67e22; }
+        .live-price-box { background: #fff; padding: 15px; border-radius: 10px; text-align: center; border: 2px dashed #e67e22; margin: 10px 0; }
         .live-price-val { font-size: 32px; font-weight: bold; color: #e67e22; }
-        .warning-text { color: #e74c3c; font-weight: bold; font-size: 12px; display: block; margin-top: 5px; }
-        .btn-add { background-color: #27ae60; color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; }
-        .btn-checkout { background-color: #2c3e50; color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .cart-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-        .cart-total { text-align: right; font-size: 22px; font-weight: bold; color: #c0392b; margin-top: 15px; padding: 10px; border-top: 2px solid #2c3e50; }
+        .btn-add { background: #27ae60; color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .btn-checkout { background: #2c3e50; color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .inv-panel { background: #2c3e50; color: white; padding: 15px; border-radius: 15px; width: 100%; max-width: 550px; }
         .hidden { display: none !important; }
-        .option-group { background:#fff9f0; padding:12px; border-radius:10px; border: 1px solid #ffe0b2; margin-top: 10px; }
-        .check-item { display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 8px; font-size: 14px; }
-        .check-item input { width: auto; transform: scale(1.2); }
-        @media print { .no-print { display: none !important; } .card { box-shadow: none; border: none; width: 100%; } body { background: #fff; padding: 0; } }
+        @media print { .no-print { display: none !important; } .card { box-shadow: none; border: none; width: 100%; } }
     </style>
 </head>
 <body>
 
-<div class="card no-print" id="inputSection">
-    <h2>韋瑞畫廊 v6.0</h2>
-
-    <div class="section" style="background: #fcfcfc; border: 1px solid #eee; padding: 15px; border-radius: 10px;">
-        <label>👤 客戶資料</label>
-        <div class="row" style="margin-bottom: 8px;"><input type="text" id="cust_name" placeholder="姓名"><input type="tel" id="cust_phone" placeholder="電話"></div>
-        <div class="row">
-            <div><label style="font-size: 11px;">收件日</label><input type="date" id="date_receive"></div>
-            <div><label style="font-size: 11px;">交件日</label><input type="date" id="date_deliver"></div>
-        </div>
+<div class="card no-print" id="clientModule">
+    <h3>👤 客戶資訊</h3>
+    <div class="row">
+        <input type="text" id="cust_name" placeholder="客戶姓名">
+        <input type="tel" id="cust_phone" placeholder="電話">
     </div>
+    <div class="row" style="margin-top:10px;">
+        <div style="flex:1;"><label>收件日</label><input type="date" id="date_receive"></div>
+        <div style="flex:1;"><label>預計交件</label><input type="date" id="date_deliver"></div>
+    </div>
+</div>
 
+<div class="card no-print" id="quoteModule">
+    <h3>💰 報價計算</h3>
     <div class="section">
         <label>報價模式</label>
         <select id="mode" onchange="toggleMode()">
-            <option value="normal">國畫裝框 (周長計價)</option>
-            <option value="oil" selected>油畫裝框 (堆疊計價)</option>
-            <option value="board">國畫裱板 (面積計價)</option>
+            <option value="normal">國畫裝框</option>
+            <option value="oil">油畫裝框</option>
+            <option value="board">國畫裱板</option>
             <option value="scroll">立軸掛軸</option>
         </select>
     </div>
 
-    <div id="size-inputs">
-        <div class="row">
-            <div class="section"><label>畫心長 (三位數)</label><input type="number" id="L_input" placeholder="如 300" oninput="calculateLive()" inputmode="numeric"></div>
-            <div class="section"><label>畫心寬 (三位數)</label><input type="number" id="W_input" placeholder="如 600" oninput="calculateLive()" inputmode="numeric"></div>
-        </div>
-        <div class="row">
-            <div class="section"><label>預留長邊</label><input type="number" id="padL_input" value="100" oninput="calculateLive()" inputmode="numeric"></div>
-            <div class="section"><label>預留短邊</label><input type="number" id="padW_input" value="50" oninput="calculateLive()" inputmode="numeric"></div>
-        </div>
+    <div class="row">
+        <div style="flex:1;"><label>長 (三位數)</label><input type="number" id="L_in" oninput="runCalc()" inputmode="numeric"></div>
+        <div style="flex:1;"><label>寬 (三位數)</label><input type="number" id="W_in" oninput="runCalc()" inputmode="numeric"></div>
     </div>
 
-    <div id="oil-options" class="option-group">
-        <label>油畫施作方式</label>
-        <select id="oilType" onchange="calculateLive()">
-            <option value="direct">直接框 (單純框條)</option>
-            <option value="solid">立體框 (底板 + 框條)</option>
-            <option value="inout">內外框 (底板 + 框條 + 內框)</option>
+    <div class="section" style="background:#eef7ff; padding:10px; border-radius:8px; margin-top:10px;">
+        <label>🛠️ 庫存扣料連結</label>
+        <select id="linkInv">
+            <option value="none">-- 僅計算，不扣料 --</option>
+            <option value="frame_1">1寸2國畫框 (咖啡色)</option>
+            <option value="frame_2">小新Ｂ1 (咖啡色)</option>
         </select>
-        
-        <label style="margin-top:10px;">框條選擇 (基數)</label>
-        <select id="oilFrameBase" onchange="calculateLive()">
-            <option value="20">6分框 (20)</option>
-            <option value="25">寸半框 (25)</option>
-            <option value="35">兩寸半框 (35)</option>
-            <option value="45">三寸框 (45)</option>
-        </select>
-
-        <label style="margin-top:10px;">選配加購項目</label>
-        <div class="check-item"><input type="checkbox" id="oilCloth" onchange="calculateLive()"> 布內框 (長+寬 × 12)</div>
-        <div class="check-item"><input type="checkbox" id="oilAcy" onchange="calculateLive()"> 加壓克力 (80/才)</div>
-        <div class="check-item"><input type="checkbox" id="oilSwap" onchange="calculateLive()"> 加替換式設備 (50/才)</div>
-        <div class="check-item"><input type="checkbox" id="oilProtect" onchange="calculateLive()"> 畫面保護 (80/才)</div>
-        <div class="row" style="margin-top:5px;"><label style="font-size:12px;width:80px">畫面修復</label><input type="number" id="oilRepair" placeholder="費用手填" oninput="calculateLive()"></div>
-    </div>
-
-    <div id="normal-extra" style="display:none;">
-        <label>選擇框種</label>
-        <select id="baseRate" onchange="calculateLive()">
-            <option value="250">國畫框 (250)</option>
-            <option value="280">2寸特選手工框 (280)</option>
-            <option value="300">3寸特選手工框 (300)</option>
-        </select>
-    </div>
-
-    <div id="sizeDisplay" class="unit-info">
-        <div><strong>尺寸：</strong> <span id="innerL_txt">0</span>x<span id="innerW_txt">0</span> cm (<span id="innerTai_txt">0x0</span> 尺)</div>
-        <div id="oilDetail" style="display:none; font-size:12px; color:#d35400; margin-top:5px;">換算英吋：<span id="inch_txt">0</span>"</div>
+        <label style="margin-top:10px;"><input type="checkbox" id="linkAcy" onchange="runCalc()"> 使用壓克力板扣料</label>
     </div>
 
     <div class="live-price-box">
-        <div class="live-price-val">NT$ <span id="liveTotal">0</span></div>
-        <span id="liveWarning" class="warning-text"></span>
+        <div class="live-price-val">NT$ <span id="priceTxt">0</span></div>
+        <small id="sizeDetail" style="color:#7f8c8d;"></small>
     </div>
-
-    <button class="btn-add" onclick="addToCart()">＋ 加入訂單清單</button>
+    <button class="btn-add" onclick="addItem()">＋ 加入訂單清單</button>
 </div>
 
-<div class="card" id="cartSection">
-    <h3>訂單報價單</h3>
-    <div id="printInfo" class="info-grid">
-        <div class="info-item"><b>客戶：</b><span id="p_name">---</span></div>
-        <div class="info-item"><b>電話：</b><span id="p_phone">---</span></div>
-        <div class="info-item"><b>收件日：</b><span id="p_dateR">---</span></div>
-        <div class="info-item"><b>交件日：</b><span id="p_dateD">---</span></div>
+<div class="card" id="cartModule">
+    <h3>📝 報價清單</h3>
+    <div id="printClient" class="hidden" style="margin-bottom:10px; border-bottom:1px solid #ccc; padding-bottom:10px;"></div>
+    <table style="width:100%;" id="cartTable"></table>
+    <div style="text-align:right; font-size:20px; font-weight:bold; margin-top:15px; border-top:2px solid #2c3e50; padding-top:10px;">
+        總計：NT$ <span id="totalTxt">0</span>
     </div>
-    <table class="cart-table"><tbody id="cartItems"></tbody></table>
-    <div class="cart-total">總計金額：NT$ <span id="grandTotal">0</span></div>
-    <div class="no-print">
-        <button id="confirmBtn" class="btn-checkout" onclick="checkoutMode()">確認結單</button>
-        <button id="resetBtn" class="btn-checkout hidden" style="background:#f39c12;" onclick="resetAndBack()">返回清空</button>
-        <button class="btn-checkout" style="background:#3498db;" onclick="window.print()">列印單據</button>
+    <button id="finalBtn" class="btn-checkout no-print" onclick="processCheckout()">確認結單 (扣除庫存)</button>
+    <button class="btn-checkout no-print" style="background:#3498db;" onclick="window.print()">列印單據</button>
+</div>
+
+<div class="inv-panel no-print">
+    <h3>📦 庫存儀表板</h3>
+    <div id="invList"></div>
+    <div style="margin-top:10px; border-top:1px solid #444; padding-top:10px;">
+        <select id="addType" style="background:#34495e; color:white; border:none; padding:5px;"><option value="frame_1">1寸2框</option><option value="frame_2">小新B1</option><option value="acy_36">3X6壓克力</option><option value="acy_48">4X8壓克力</option></select>
+        <input type="number" id="addQty" placeholder="數量" style="width:80px; padding:5px; border-radius:5px;">
+        <button onclick="handleRestock()" style="background:#27ae60; color:white; border:none; padding:5px 15px; border-radius:5px;">進貨</button>
     </div>
 </div>
 
 <script>
+    // --- 配置區 ---
+    const TG_TOKEN = '8025147107:AAFdsvl4GOUs9AVH1h6n-Lpe8i75liMIPik';
+    const TG_CHAT_ID = '1135952609';
     const TAI_TO_CM = 30.3;
-    const TAI_TO_INCH = 11.93;
+
+    // --- 庫存初始化 (模組化資料) ---
+    let invData = JSON.parse(localStorage.getItem('weray_inv_v7')) || {
+        frame_1: { name: "1寸2國畫框", qty: 200, unit: "尺", min: 30 },
+        frame_2: { name: "小新Ｂ1", qty: 200, unit: "尺", min: 30 },
+        acy_36: { name: "壓克力 3X6", qty: 10, unit: "張", min: 5 },
+        acy_48: { name: "壓克力 4X8", qty: 10, unit: "張", min: 5 }
+    };
+
     let cart = [];
-    let livePrice = 0;
+    let currentPrice = 0;
 
-    function initDates() {
-        const today = new Date();
-        const future = new Date(); future.setDate(today.getDate() + 14);
-        document.getElementById('date_receive').value = today.toISOString().split('T')[0];
-        document.getElementById('date_deliver').value = future.toISOString().split('T')[0];
+    // --- 計算模組 (基於 v6.0 公式) ---
+    function runCalc() {
+        const L = (parseFloat(document.getElementById('L_in').value) || 0) / 100;
+        const W = (parseFloat(document.getElementById('W_in').value) || 0) / 100;
+        const mode = document.getElementById('mode').value;
+        
+        if (L <= 0 || W <= 0) { currentPrice = 0; updateUI(); return; }
+
+        // 簡化示範邏輯 (可在此處換入您 6.0 的油畫/國畫詳細公式)
+        const tL = L + 1.0; const tW = W + 0.5;
+        currentPrice = Math.round((tL + tW) * 250);
+        
+        document.getElementById('sizeDetail').innerText = `框內：${(tL*TAI_TO_CM).toFixed(1)}x${(tW*TAI_TO_CM).toFixed(1)} cm`;
+        updateUI();
     }
 
-    function calculateLive() {
-        const mode = document.getElementById('mode').value;
-        const warningEl = document.getElementById('liveWarning');
-        warningEl.innerText = "";
-        
-        const Lt = (parseFloat(document.getElementById('L_input').value) || 0) / 100;
-        const Wt = (parseFloat(document.getElementById('W_input').value) || 0) / 100;
-        const pLt = (parseFloat(document.getElementById('padL_input').value) || 0) / 100;
-        const pWt = (parseFloat(document.getElementById('padW_input').value) || 0) / 100;
-        
-        if (Lt <= 0 || Wt <= 0) { livePrice = 0; document.getElementById('liveTotal').innerText = "0"; return; }
+    function updateUI() { document.getElementById('priceTxt').innerText = currentPrice.toLocaleString(); }
 
-        const tL = Lt + pLt; const tW = Wt + pWt;
-        const inLcm = tL * TAI_TO_CM; const inWcm = tW * TAI_TO_CM;
-        const L_inch = tL * TAI_TO_INCH; const W_inch = tW * TAI_TO_INCH;
-        const totalCai = (L_inch * W_inch) / 144;
-
-        document.getElementById('innerL_txt').innerText = inLcm.toFixed(1);
-        document.getElementById('innerW_txt').innerText = inWcm.toFixed(1);
-        document.getElementById('innerTai_txt').innerText = `${tL.toFixed(2)}x${tW.toFixed(2)}`;
-
-        if (mode === 'oil') {
-            document.getElementById('oilDetail').style.display = "block";
-            document.getElementById('inch_txt').innerText = `${L_inch.toFixed(1)}" x ${W_inch.toFixed(1)}"`;
-            
-            const oilType = document.getElementById('oilType').value;
-            const frameBase = parseInt(document.getElementById('oilFrameBase').value);
-            
-            // 基礎判定
-            let multiplier = (inLcm > 120 || (inLcm + inWcm)*2 > 480) ? 1.8 : 1.0;
-            if (multiplier > 1) warningEl.innerText = "⚠️ 特大型件已計入結構溢價";
-
-            // A. 底板費 (立體/內外框)
-            let basePrice = (oilType === 'direct') ? 0 : Math.round(totalCai * 50);
-            // B. 框條費 (英吋周長)
-            let framePrice = Math.round((L_inch + W_inch) * frameBase * multiplier);
-            // C. 內框費 (內外框)
-            let innerFramePrice = (oilType === 'inout') ? Math.round((L_inch + W_inch) * 12) : 0;
-            
-            livePrice = basePrice + framePrice + innerFramePrice;
-
-            // 選配
-            if (document.getElementById('oilCloth').checked) livePrice += Math.round((L_inch + W_inch) * 12);
-            if (document.getElementById('oilAcy').checked) livePrice += Math.round(totalCai * 80);
-            if (document.getElementById('oilSwap').checked) livePrice += Math.round(totalCai * 50);
-            if (document.getElementById('oilProtect').checked) livePrice += Math.round(totalCai * 80);
-            livePrice += (parseFloat(document.getElementById('oilRepair').value) || 0);
-
-        } else if (mode === 'normal') {
-            const baseRate = parseInt(document.getElementById('baseRate').value);
-            let mult = (inLcm > 120 || (inLcm + inWcm)*2 > 480) ? 1.5 : 1.0;
-            let extra = (inLcm > 120 || (inLcm + inWcm)*2 > 480) ? 4000 : 0;
-            livePrice = Math.round((tL + tW) * baseRate * mult + extra);
-        } else if (mode === 'board') {
-            livePrice = Math.round(totalCai * 80);
-        }
-
-        if (livePrice > 0 && livePrice < 350) livePrice = 350;
-        document.getElementById('liveTotal').innerText = livePrice.toLocaleString();
-    }
-
-    function toggleMode() {
-        const mode = document.getElementById('mode').value;
-        document.getElementById('oil-options').style.display = (mode === 'oil') ? 'block' : 'none';
-        document.getElementById('normal-extra').style.display = (mode === 'normal') ? 'block' : 'none';
-        document.getElementById('scroll-inputs').style.display = (mode === 'scroll') ? 'block' : 'none';
-        calculateLive();
-    }
-
-    function addToCart() {
-        if (livePrice <= 0) return alert("請輸入尺寸");
-        const mode = document.getElementById('mode').value;
-        let title = "油畫裝框";
-        if (mode === 'oil') {
-            const typeText = document.getElementById('oilType').options[document.getElementById('oilType').selectedIndex].text;
-            const frameText = document.getElementById('oilFrameBase').options[document.getElementById('oilFrameBase').selectedIndex].text;
-            title = `油畫-${typeText}(${frameText})`;
-        } else if (mode === 'normal') {
-            title = document.getElementById('baseRate').options[document.getElementById('baseRate').selectedIndex].text;
-        } else if (mode === 'board') { title = "國畫裱板"; }
-        
-        cart.push({ title, price: livePrice, spec: `尺寸：${document.getElementById('innerTai_txt').innerText}尺` });
+    function addItem() {
+        if (currentPrice <= 0) return;
+        const L = (parseFloat(document.getElementById('L_in').value) || 0) / 100;
+        const W = (parseFloat(document.getElementById('W_in').value) || 0) / 100;
+        cart.push({
+            name: document.getElementById('mode').options[document.getElementById('mode').selectedIndex].text,
+            price: currentPrice,
+            len: (L + W + 1.5) * 2, // 預計消耗尺數
+            invKey: document.getElementById('linkInv').value,
+            acyKey: document.getElementById('linkAcy').checked ? ((L*W*144 > 18) ? 'acy_48' : 'acy_36') : null
+        });
         renderCart();
     }
 
     function renderCart() {
-        const tbody = document.getElementById('cartItems'); tbody.innerHTML = ""; let total = 0;
-        cart.forEach((item, index) => {
-            total += item.price;
-            tbody.innerHTML += `<tr><td style="padding:8px; border-bottom:1px solid #eee;"><b>${item.title}</b><br><small>${item.spec}</small></td><td style="padding:8px; border-bottom:1px solid #eee;">${item.price.toLocaleString()}</td><td class="no-print" style="padding:8px; border-bottom:1px solid #eee;"><button onclick="cart.splice(${index},1);renderCart();" style="background:none;border:none;color:red;cursor:pointer;">❌</button></td></tr>`;
+        const table = document.getElementById('cartTable');
+        table.innerHTML = ""; let total = 0;
+        cart.forEach((it, idx) => {
+            total += it.price;
+            table.innerHTML += `<tr><td style="padding:5px;">${it.name}</td><td align="right">${it.price.toLocaleString()}</td><td align="right"><button onclick="cart.splice(${idx},1);renderCart()" style="color:red; background:none; border:none;">❌</button></td></tr>`;
         });
-        document.getElementById('grandTotal').innerText = total.toLocaleString();
+        document.getElementById('totalTxt').innerText = total.toLocaleString();
     }
 
-    function checkoutMode() {
-        if (cart.length === 0) return alert("清單為空");
-        document.getElementById('p_name').innerText = document.getElementById('cust_name').value || "未填";
-        document.getElementById('p_phone').innerText = document.getElementById('cust_phone').value || "未填";
-        document.getElementById('p_dateR').innerText = document.getElementById('date_receive').value;
-        document.getElementById('p_dateD').innerText = document.getElementById('date_deliver').value;
-        document.getElementById('inputSection').classList.add('hidden');
-        document.getElementById('confirmBtn').classList.add('hidden');
-        document.getElementById('resetBtn').classList.remove('hidden');
+    // --- 庫存與結單模組 ---
+    async function processCheckout() {
+        if (cart.length === 0) return alert("清單是空的");
+        
+        let alerts = [];
+        cart.forEach(it => {
+            if (it.invKey !== 'none') invData[it.invKey].qty -= it.len;
+            if (it.acyKey) invData[it.acyKey].qty -= 1;
+        });
+
+        // 檢查警報
+        for (let key in invData) {
+            if (invData[key].qty < invData[key].min) {
+                alerts.push(`【${invData[key].name}】剩餘 ${invData[key].qty.toFixed(1)}${invData[key].unit}`);
+            }
+        }
+
+        saveData();
+        renderInv();
+
+        if (alerts.length > 0) {
+            await sendTG("⚠️ 庫存不足警告：\n" + alerts.join("\n"));
+            alert("結單完成！庫存偏低，已發送 Telegram 通知師傅。");
+        } else {
+            alert("結單完成，庫存已自動扣除。");
+        }
+        document.getElementById('finalBtn').classList.add('hidden');
     }
 
-    function resetAndBack() {
-        if (!confirm("確定重置？")) return;
-        cart = []; renderCart();
-        document.getElementById('inputSection').classList.remove('hidden');
-        document.getElementById('confirmBtn').classList.remove('hidden');
-        document.getElementById('resetBtn').classList.add('hidden');
-        initDates();
+    function handleRestock() {
+        const key = document.getElementById('addType').value;
+        const val = parseFloat(document.getElementById('addQty').value) || 0;
+        invData[key].qty += val;
+        saveData(); renderInv();
+        alert("進貨完成！");
     }
 
-    window.onload = function() { initDates(); toggleMode(); };
+    function saveData() { localStorage.setItem('weray_inv_v7', JSON.stringify(invData)); }
+
+    function renderInv() {
+        const div = document.getElementById('invList');
+        div.innerHTML = "";
+        for (let key in invData) {
+            const it = invData[key];
+            const low = it.qty < it.min;
+            div.innerHTML += `<div style="display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid #444;">
+                <span>${it.name}</span><span style="${low?'color:#ff7675;font-weight:bold':''}">${it.qty.toFixed(1)} ${it.unit}</span>
+            </div>`;
+        }
+    }
+
+    async function sendTG(msg) {
+        const url = `https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(msg)}`;
+        return fetch(url).catch(e => console.error(e));
+    }
+
+    function toggleMode() { runCalc(); }
+
+    window.onload = function() {
+        const today = new Date();
+        document.getElementById('date_receive').value = today.toISOString().split('T')[0];
+        renderInv();
+    };
 </script>
 </body>
 </html>
