@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>韋瑞畫廊 v6.0</title>
+    <title>韋瑞畫廊 v6.1</title>
     <style>
         body { font-family: "Microsoft JhengHei", sans-serif; background-color: #f4f7f6; padding: 15px; display: flex; flex-direction: column; align-items: center; }
         .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 550px; margin-bottom: 15px; box-sizing: border-box; }
@@ -28,13 +28,10 @@
 <body>
 
 <div class="card no-print">
-    <h2>韋瑞畫廊 v6.0</h2>
+    <h2>韋瑞畫廊 v6.1</h2>
     <div class="section" style="background: #fcfcfc; border: 1px solid #eee; padding: 15px; border-radius: 10px;">
         <label>👤 客戶資料</label>
-        <div class="row" style="margin-bottom: 10px;">
-            <input type="text" id="cust_name" placeholder="姓名">
-            <input type="tel" id="cust_phone" placeholder="電話">
-        </div>
+        <div class="row" style="margin-bottom: 10px;"><input type="text" id="cust_name" placeholder="姓名"><input type="tel" id="cust_phone" placeholder="電話"></div>
         <div class="row">
             <div style="flex:1;"><label style="font-size:12px;">收件日期</label><input type="date" id="date_receive"></div>
             <div style="flex:1;"><label style="font-size:12px;">交件日期</label><input type="date" id="date_deliver"></div>
@@ -158,25 +155,35 @@
         const Lcm = tL * TAI_TO_CM; const Wcm = tW * TAI_TO_CM;
         const Linch = tL * TAI_TO_INCH; const Winch = tW * TAI_TO_INCH;
         const cai = (Linch * Winch) / 144;
-        const perim_cm = (Lcm + Wcm) * 2;
+        
+        // --- 修正後的超尺寸判定邏輯 ---
+        // 門檻：4尺(121.2cm), 8尺(242.4cm)
+        const maxSide = Math.max(Lcm, Wcm);
+        let multiplier = 1.0;
+        let laborExtra = 0;
+
+        if (maxSide > 242.4) {
+            multiplier = 1.8; // 超過8尺
+            laborExtra = 5000;
+            warningEl.innerText = "⚠️ 邊長超過 8 尺：特大型件加成已計入";
+        } else if (maxSide > 121.2) {
+            multiplier = 1.5; // 超過4尺
+            laborExtra = 3000;
+            warningEl.innerText = "⚠️ 邊長超過 4 尺：大型件加成已計入";
+        }
 
         document.getElementById('sizeDetail').innerText = `框內：${Lcm.toFixed(1)}x${Wcm.toFixed(1)} cm (${tL.toFixed(2)}x${tW.toFixed(2)} 尺)`;
 
         if (mode === 'normal') {
             const base = parseInt(document.getElementById('baseRate').value);
-            let mult = (Math.max(Lcm, Wcm) > 120 || perim_cm > 480) ? 1.5 : 1.0;
-            let extra = (perim_cm >= 700) ? 5000 : ((perim_cm > 480) ? 3000 : 0);
-            if (mult > 1) warningEl.innerText = "⚠️ 特大件結構溢價已計入";
-            currentPrice = Math.round((tL + tW) * base * mult + extra);
-            if(document.getElementById('addAcy').checked) currentPrice += Math.round(tL * tW * (mult > 1 ? 120 : 80));
+            currentPrice = Math.round((tL + tW) * base * multiplier + laborExtra);
+            if(document.getElementById('addAcy').checked) currentPrice += Math.round(tL * tW * (multiplier > 1 ? 120 : 80));
         } 
         else if (mode === 'oil') {
             const type = document.getElementById('oilType').value;
             const base = parseInt(document.getElementById('oilFrameBase').value);
-            let mult = (Lcm > 120 || perim_cm > 480) ? 1.8 : 1.0;
-            if (mult > 1) warningEl.innerText = "⚠️ 油畫特大件溢價已計入";
             let baseP = (type === 'direct') ? 0 : Math.round(cai * 50);
-            let frameP = Math.round((Linch + Winch) * base * mult);
+            let frameP = Math.round((Linch + Winch) * base * multiplier);
             let inP = (type === 'inout') ? Math.round((Linch + Winch) * 12) : 0;
             currentPrice = baseP + frameP + inP;
             if(document.getElementById('oilCloth').checked) currentPrice += Math.round((Linch + Winch) * 12);
