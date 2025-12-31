@@ -166,10 +166,10 @@
             multiplier = 1.8; // 超過8尺
             laborExtra = 5000;
             warningEl.innerText = "⚠️ 邊長超過 8 尺：特大型件加成已計入";
-        } else if (maxSide > 121.2) {
-            multiplier = 1.5; // 超過4尺
-            laborExtra = 3000;
-            warningEl.innerText = "⚠️ 邊長超過 4 尺：大型件加成已計入";
+        } else if (maxSide > 212.1) { // 改成 212.1，代表單邊超過 7 尺才加價
+        multiplier = 1.5; 
+        laborExtra = 3000;
+        warningEl.innerText = "⚠️ 邊長超過 7 尺：大型件加成已計入";
         }
 
         document.getElementById('sizeDetail').innerText = `框內：${Lcm.toFixed(1)}x${Wcm.toFixed(1)} cm (${tL.toFixed(2)}x${tW.toFixed(2)} 尺)`;
