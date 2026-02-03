@@ -3,36 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>韋瑞畫廊 v6.4</title>
+    <title>韋瑞畫廊 v6.5</title>
     <style>
-        body { font-family: "Microsoft JhengHei", sans-serif; background-color: #f4f7f6; padding: 15px; display: flex; flex-direction: column; align-items: center; }
-        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 550px; margin-bottom: 15px; box-sizing: border-box; }
-        h2, h3 { text-align: center; color: #2c3e50; margin-top: 0; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        :root { --primary-color: #3498db; --secondary-color: #2c3e50; --accent-color: #e67e22; --success-color: #27ae60; --bg-color: #f4f7f6; }
+        body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); padding: 10px; display: flex; flex-direction: column; align-items: center; margin: 0; }
+        .card { background: white; padding: 18px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); width: 100%; max-width: 500px; margin-bottom: 15px; box-sizing: border-box; }
+        h2, h3 { text-align: center; color: var(--secondary-color); margin: 0 0 15px 0; border-bottom: 2px solid var(--primary-color); padding-bottom: 8px; font-size: 1.25rem; }
         .section { margin-bottom: 12px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #34495e; font-size: 14px; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ccd1d9; border-radius: 8px; box-sizing: border-box; font-size: 16px; background: #fff; }
-        .row { display: flex; gap: 8px; align-items: center; }
-        .live-price-box { background: #fff; padding: 15px; border-radius: 10px; text-align: center; border: 2px dashed #e67e22; margin: 10px 0; }
-        .live-price-val { font-size: 32px; font-weight: bold; color: #e67e22; }
-        .btn-add { background: #27ae60; color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; }
-        .btn-checkout { background: #2c3e50; color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .history-panel { background: #ecf0f1; padding: 15px; border-radius: 15px; width: 100%; max-width: 550px; margin-top: 20px; border: 1px solid #bdc3c7; }
-        .history-item { background: #fff; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 5px solid #3498db; font-size: 13px; }
-        .option-group { background:#fff9f0; padding:12px; border-radius:10px; border: 1px solid #ffe0b2; margin-top: 10px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; font-size: 0.9rem; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 1rem; background: #fff; outline: none; }
+        input:focus { border-color: var(--primary-color); }
+        .row { display: flex; gap: 8px; align-items: flex-end; }
+        .live-price-box { background: #fff; padding: 12px; border-radius: 8px; text-align: center; border: 2px dashed var(--accent-color); margin: 15px 0; }
+        .live-price-val { font-size: 2rem; font-weight: bold; color: var(--accent-color); line-height: 1.2; }
+        .size-info { font-size: 0.85rem; color: #7f8c8d; margin-top: 5px; }
+        .btn { border: none; width: 100%; padding: 14px; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; color: white; margin-top: 8px; }
+        .btn-add { background-color: var(--success-color); }
+        .btn-checkout { background-color: var(--secondary-color); }
+        .btn-print { background-color: var(--primary-color); }
+        .btn:active { transform: scale(0.98); opacity: 0.9; }
+        .option-group { background:#fff9f0; padding:12px; border-radius:8px; border: 1px solid #ffe0b2; margin-top: 10px; }
+        .cart-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.95rem; }
+        .cart-table td { padding: 10px 5px; border-bottom: 1px solid #eee; }
+        .total-row { text-align: right; font-size: 1.3rem; font-weight: bold; color: #c0392b; margin-top: 15px; border-top: 2px solid #eee; padding-top: 10px; }
+        .history-panel { background: #ecf0f1; padding: 15px; border-radius: 12px; width: 100%; max-width: 500px; margin-top: 10px; }
+        .history-item { background: #fff; padding: 10px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid var(--primary-color); font-size: 0.85rem; }
         .hidden { display: none !important; }
-        @media print { .no-print { display: none !important; } .card { box-shadow: none; border: none; width: 100%; } }
+        @media print { .no-print { display: none !important; } .card { box-shadow: none; border: none; width: 100%; } body { background: #fff; } }
     </style>
 </head>
 <body>
 
 <div class="card no-print">
-    <h2>韋瑞畫廊 v6.4</h2>
-    <div class="section" style="background: #fcfcfc; border: 1px solid #eee; padding: 15px; border-radius: 10px;">
-        <label>👤 客戶資料</label>
-        <div class="row" style="margin-bottom: 10px;"><input type="text" id="cust_name" placeholder="姓名"><input type="tel" id="cust_phone" placeholder="電話"></div>
+    <h2>韋瑞畫廊 v6.5</h2>
+    <div class="section" style="background: #fcfcfc; border: 1px solid #eee; padding: 12px; border-radius: 8px;">
+        <label>👤 客戶資訊</label>
+        <div class="row" style="margin-bottom: 8px;"><input type="text" id="cust_name" placeholder="姓名"><input type="tel" id="cust_phone" placeholder="電話"></div>
         <div class="row">
-            <div style="flex:1;"><label style="font-size:12px;">收件日期</label><input type="date" id="date_receive"></div>
-            <div style="flex:1;"><label style="font-size:12px;">預計交件</label><input type="date" id="date_deliver"></div>
+            <div style="flex:1;"><label style="font-size:11px;">收件日期</label><input type="date" id="date_receive"></div>
+            <div style="flex:1;"><label style="font-size:11px;">預計交件</label><input type="date" id="date_deliver"></div>
         </div>
     </div>
 </div>
@@ -50,8 +59,8 @@
     </div>
 
     <div class="row">
-        <div style="flex:1;"><label>畫心長</label><input type="number" id="L_in" oninput="runCalc()" inputmode="numeric"></div>
-        <div style="flex:1;"><label>畫心寬</label><input type="number" id="W_in" oninput="runCalc()" inputmode="numeric"></div>
+        <div style="flex:1;"><label>畫心長 (三位數)</label><input type="number" id="L_in" oninput="runCalc()" inputmode="numeric" placeholder="如 300"></div>
+        <div style="flex:1;"><label>畫心寬 (三位數)</label><input type="number" id="W_in" oninput="runCalc()" inputmode="numeric" placeholder="如 500"></div>
     </div>
 
     <div id="normal-options" class="option-group">
@@ -62,45 +71,36 @@
             <option value="300">3寸特選手工框 (300)</option>
             <option value="inner_outer">國畫內外框 (250 - 含克力)</option>
         </select>
-        <div id="acyRow" style="margin-top:10px;"><label><input type="checkbox" id="addAcy" onchange="runCalc()"> 加壓克力 (120/才)</label></div>
+        <div id="acyRow" style="margin-top:8px;"><label style="font-weight:normal;"><input type="checkbox" id="addAcy" onchange="runCalc()" style="width:auto;"> 加壓克力 (120/才)</label></div>
     </div>
 
-    <div id="oil-options" class="option-group hidden">
-        <label>油畫施作方式</label>
-        <select id="oilType" onchange="runCalc()">
-            <option value="direct">直接框</option>
-            <option value="solid">立體框</option>
-            <option value="inout">內外框</option>
-        </select>
-    </div>
-
-    <div class="section" style="margin-top:10px;">
+    <div class="section" style="margin-top:12px;">
         <label>📝 單項備註 (客製需求)</label>
-        <input type="text" id="item_note" placeholder="例如：加金邊、特殊顏色...">
+        <input type="text" id="item_note" placeholder="如：加金邊、特殊顏色...">
     </div>
 
     <div class="live-price-box">
         <div class="live-price-val">NT$ <span id="priceTxt">0</span></div>
-        <div id="sizeDetail" style="font-size:13px; color:#7f8c8d;"></div>
+        <div id="sizeDetail" class="size-info">輸入尺寸開始計算</div>
     </div>
-    <button class="btn-add" onclick="addItem()">＋ 加入報價清單</button>
+    <button class="btn btn-add" onclick="addItem()">＋ 加入報價清單</button>
 </div>
 
 <div class="card" id="cartSection">
     <h3>📝 報價清單</h3>
-    <table style="width:100%;" id="cartTable"></table>
-    <div style="text-align:right; font-size:20px; font-weight:bold; margin-top:10px; border-top:2px solid #333; padding-top:10px;">
-        總計：NT$ <span id="totalTxt">0</span>
-    </div>
+    <div id="printHeader" class="hidden" style="margin-bottom:10px; font-size:12px; line-height:1.6; border-bottom:1px solid #333; padding-bottom:5px;"></div>
+    <table class="cart-table" id="cartTable"></table>
+    <div class="total-row">總計：NT$ <span id="totalTxt">0</span></div>
     <div class="no-print">
-        <button id="finalBtn" class="btn-checkout" onclick="processCheckout()">確認結單並存檔同步</button>
-        <button id="resetBtn" class="btn-checkout hidden" style="background:#f39c12;" onclick="location.reload()">下一張新訂單</button>
+        <button id="finalBtn" class="btn btn-checkout" onclick="processCheckout()">確認結單並存檔同步</button>
+        <button id="resetBtn" class="btn hidden" style="background:#f39c12;" onclick="location.reload()">下一張新訂單</button>
+        <button class="btn btn-print" onclick="window.print()">列印單據</button>
     </div>
 </div>
 
 <div class="history-panel no-print">
-    <h3>📂 本地歷史檔案庫 (最近100筆)</h3>
-    <input type="text" id="searchKey" placeholder="搜尋姓名或電話..." oninput="searchHistory()" style="margin-bottom:15px;">
+    <h3>📂 歷史檔案庫</h3>
+    <input type="text" id="searchKey" placeholder="搜尋姓名或電話..." oninput="searchHistory()" style="margin-bottom:10px;">
     <div id="historyList"></div>
 </div>
 
@@ -117,30 +117,32 @@
         const tL = L + 1.0; const tW = W + 0.5;
         const Lcm = tL * TAI_TO_CM; const Wcm = tW * TAI_TO_CM;
         
-        document.getElementById('sizeDetail').innerText = `尺寸：${Lcm.toFixed(1)}x${Wcm.toFixed(1)}cm`;
-
-        if (mode === 'normal') {
-            const base = document.getElementById('baseRate').value;
-            if (base === 'inner_outer') {
-                currentPrice = Math.round((tL + tW) * 2 * 250);
-                document.getElementById('acyRow').classList.add('hidden');
-            } else {
-                currentPrice = Math.round((tL + tW) * parseInt(base));
-                document.getElementById('acyRow').classList.remove('hidden');
-                if(document.getElementById('addAcy').checked) currentPrice += Math.round(tL * tW * 80);
-            }
+        if (L > 0 && W > 0) {
+            document.getElementById('sizeDetail').innerText = `尺寸：${Lcm.toFixed(1)}x${Wcm.toFixed(1)}cm`;
+            if (mode === 'normal') {
+                const base = document.getElementById('baseRate').value;
+                if (base === 'inner_outer') {
+                    currentPrice = Math.round((tL + tW) * 2 * 250);
+                    document.getElementById('acyRow').classList.add('hidden');
+                } else {
+                    currentPrice = Math.round((tL + tW) * 2 * parseInt(base));
+                    document.getElementById('acyRow').classList.remove('hidden');
+                    if(document.getElementById('addAcy').checked) currentPrice += Math.round(tL * tW * 120);
+                }
+            } else { currentPrice = 0; } // 簡化邏輯供對比
         } else {
-            // 此處可依序加入油畫、裱板、立軸的計算邏輯
-            currentPrice = 0; 
+            currentPrice = 0;
+            document.getElementById('sizeDetail').innerText = "輸入尺寸開始計算";
         }
         document.getElementById('priceTxt').innerText = currentPrice.toLocaleString();
     }
 
     function addItem() {
-        if(currentPrice <= 0) return;
+        if(currentPrice <= 0) return alert("請輸入有效尺寸");
         const note = document.getElementById('item_note').value;
+        const modeName = document.getElementById('mode').options[document.getElementById('mode').selectedIndex].text;
         cart.push({
-            title: document.getElementById('mode').options[document.getElementById('mode').selectedIndex].text,
+            title: modeName,
             price: currentPrice,
             spec: document.getElementById('sizeDetail').innerText,
             note: note ? `(備註：${note})` : ""
@@ -151,16 +153,15 @@
 
     function renderCart() {
         const table = document.getElementById('cartTable'); table.innerHTML = ""; let total = 0;
-        cart.forEach((it) => {
+        cart.forEach((it, idx) => {
             total += it.price;
-            table.innerHTML += `<tr><td style="padding:8px; border-bottom:1px solid #eee;"><b>${it.title}</b><br><small>${it.spec} ${it.note}</small></td><td align="right">${it.price.toLocaleString()}</td></tr>`;
+            table.innerHTML += `<tr><td><b>${it.title}</b><br><small>${it.spec} ${it.note}</small></td><td align="right">${it.price.toLocaleString()}</td></tr>`;
         });
         document.getElementById('totalTxt').innerText = total.toLocaleString();
     }
 
     async function processCheckout() {
-        if(cart.length === 0) return alert("報價單內沒有項目");
-        
+        if(cart.length === 0) return alert("清單內沒有項目");
         const order = {
             name: document.getElementById('cust_name').value || "未填",
             phone: document.getElementById('cust_phone').value || "未填",
@@ -169,12 +170,12 @@
             items: cart
         };
 
-        // 1. 本地存檔
+        // 本地存檔
         let history = JSON.parse(localStorage.getItem('weray_history')) || [];
         history.unshift(order);
-        localStorage.setItem('weray_history', JSON.stringify(history.slice(0, 100)));
+        localStorage.setItem('weray_history', JSON.stringify(history.slice(0, 50)));
 
-        // 2. 雲端同步
+        // 雲端同步
         try {
             await fetch(WEB_APP_URL, {
                 method: 'POST',
@@ -183,9 +184,8 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(order)
             });
-            alert("✅ 結案成功！資料已存入本地並同步至 Google Sheets。");
+            alert("✅ 結案成功！已同步至 Google Sheets。");
         } catch (error) {
-            console.error('雲端同步失敗:', error);
             alert("⚠️ 本地已存檔，但雲端同步失敗。");
         }
 
@@ -200,24 +200,18 @@
         const list = document.getElementById('historyList');
         list.innerHTML = "";
         history.filter(h => h.name.includes(key) || h.phone.includes(key)).forEach(h => {
-            list.innerHTML += `
-                <div class="history-item">
-                    <b>${h.date} | ${h.name} (${h.phone})</b><br>
-                    總額：NT$ ${h.total}<br>
-                    <small>${h.items.map(i => i.title).join(", ")}</small>
-                </div>`;
+            list.innerHTML += `<div class="history-item"><b>${h.date} | ${h.name}</b><br>總額：NT$ ${h.total}</div>`;
         });
     }
 
     function toggleMode() {
-        const m = document.getElementById('mode').value;
-        document.getElementById('normal-options').classList.toggle('hidden', m !== 'normal');
-        document.getElementById('oil-options').classList.toggle('hidden', m !== 'oil');
+        document.getElementById('normal-options').classList.toggle('hidden', document.getElementById('mode').value !== 'normal');
         runCalc();
     }
 
     window.onload = function() {
         const d = new Date(); document.getElementById('date_receive').value = d.toISOString().split('T')[0];
+        const n = new Date(); n.setDate(d.getDate() + 14); document.getElementById('date_deliver').value = n.toISOString().split('T')[0];
         searchHistory();
     };
 </script>
