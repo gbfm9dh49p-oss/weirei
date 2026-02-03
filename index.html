@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>韋瑞畫廊 v6.3</title>
+    <title>韋瑞畫廊 v6.4</title>
     <style>
         body { font-family: "Microsoft JhengHei", sans-serif; background-color: #f4f7f6; padding: 15px; display: flex; flex-direction: column; align-items: center; }
         .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 550px; margin-bottom: 15px; box-sizing: border-box; }
@@ -26,7 +26,7 @@
 <body>
 
 <div class="card no-print">
-    <h2>韋瑞畫廊 v6.3</h2>
+    <h2>韋瑞畫廊 v6.4</h2>
     <div class="section" style="background: #fcfcfc; border: 1px solid #eee; padding: 15px; border-radius: 10px;">
         <label>👤 客戶資料</label>
         <div class="row" style="margin-bottom: 10px;"><input type="text" id="cust_name" placeholder="姓名"><input type="tel" id="cust_phone" placeholder="電話"></div>
@@ -60,7 +60,7 @@
             <option value="250">國畫框 (250)</option>
             <option value="280">2寸特選手工框 (280)</option>
             <option value="300">3寸特選手工框 (300)</option>
-            <option value="inner_outer">國畫內外框 (250)</option>
+            <option value="inner_outer">國畫內外框 (250 - 含克力)</option>
         </select>
         <div id="acyRow" style="margin-top:10px;"><label><input type="checkbox" id="addAcy" onchange="runCalc()"> 加壓克力 (120/才)</label></div>
     </div>
@@ -88,26 +88,25 @@
 
 <div class="card" id="cartSection">
     <h3>📝 報價清單</h3>
-    <div id="printHeader" class="hidden"></div>
     <table style="width:100%;" id="cartTable"></table>
     <div style="text-align:right; font-size:20px; font-weight:bold; margin-top:10px; border-top:2px solid #333; padding-top:10px;">
         總計：NT$ <span id="totalTxt">0</span>
     </div>
     <div class="no-print">
-        <button id="finalBtn" class="btn-checkout" onclick="processCheckout()">確認結單並存檔</button>
+        <button id="finalBtn" class="btn-checkout" onclick="processCheckout()">確認結單並存檔同步</button>
         <button id="resetBtn" class="btn-checkout hidden" style="background:#f39c12;" onclick="location.reload()">下一張新訂單</button>
     </div>
 </div>
 
 <div class="history-panel no-print">
-    <h3>📂 歷史檔案庫</h3>
+    <h3>📂 本地歷史檔案庫 (最近100筆)</h3>
     <input type="text" id="searchKey" placeholder="搜尋姓名或電話..." oninput="searchHistory()" style="margin-bottom:15px;">
     <div id="historyList"></div>
 </div>
 
 <script>
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxIGJhbS903H3fPdj4GSmX2-KwkjCP_ZWv676VqWnbddhw2EbvKHxQ3yqHRFGsAx4J9/exec';
     const TAI_TO_CM = 30.3;
-    const TAI_TO_INCH = 11.93;
     let cart = [];
     let currentPrice = 0;
 
@@ -123,7 +122,6 @@
         if (mode === 'normal') {
             const base = document.getElementById('baseRate').value;
             if (base === 'inner_outer') {
-                // 公式：(長+寬)*2*250 (含克力)
                 currentPrice = Math.round((tL + tW) * 2 * 250);
                 document.getElementById('acyRow').classList.add('hidden');
             } else {
@@ -131,8 +129,10 @@
                 document.getElementById('acyRow').classList.remove('hidden');
                 if(document.getElementById('addAcy').checked) currentPrice += Math.round(tL * tW * 80);
             }
+        } else {
+            // 此處可依序加入油畫、裱板、立軸的計算邏輯
+            currentPrice = 0; 
         }
-        // ... (其餘模式計算邏輯)
         document.getElementById('priceTxt').innerText = currentPrice.toLocaleString();
     }
 
@@ -151,15 +151,16 @@
 
     function renderCart() {
         const table = document.getElementById('cartTable'); table.innerHTML = ""; let total = 0;
-        cart.forEach((it, idx) => {
+        cart.forEach((it) => {
             total += it.price;
             table.innerHTML += `<tr><td style="padding:8px; border-bottom:1px solid #eee;"><b>${it.title}</b><br><small>${it.spec} ${it.note}</small></td><td align="right">${it.price.toLocaleString()}</td></tr>`;
         });
         document.getElementById('totalTxt').innerText = total.toLocaleString();
     }
 
-    function processCheckout() {
-        if(cart.length === 0) return;
+    async function processCheckout() {
+        if(cart.length === 0) return alert("報價單內沒有項目");
+        
         const order = {
             name: document.getElementById('cust_name').value || "未填",
             phone: document.getElementById('cust_phone').value || "未填",
@@ -167,12 +168,27 @@
             total: document.getElementById('totalTxt').innerText,
             items: cart
         };
-        // 存入歷史紀錄 (LocalStorage)
+
+        // 1. 本地存檔
         let history = JSON.parse(localStorage.getItem('weray_history')) || [];
         history.unshift(order);
-        localStorage.setItem('weray_history', JSON.stringify(history.slice(0, 100))); // 保留前100筆
-        
-        alert("結案成功！資料已存入檔案庫。");
+        localStorage.setItem('weray_history', JSON.stringify(history.slice(0, 100)));
+
+        // 2. 雲端同步
+        try {
+            await fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(order)
+            });
+            alert("✅ 結案成功！資料已存入本地並同步至 Google Sheets。");
+        } catch (error) {
+            console.error('雲端同步失敗:', error);
+            alert("⚠️ 本地已存檔，但雲端同步失敗。");
+        }
+
         document.getElementById('finalBtn').classList.add('hidden');
         document.getElementById('resetBtn').classList.remove('hidden');
         searchHistory();
@@ -183,7 +199,6 @@
         const history = JSON.parse(localStorage.getItem('weray_history')) || [];
         const list = document.getElementById('historyList');
         list.innerHTML = "";
-        
         history.filter(h => h.name.includes(key) || h.phone.includes(key)).forEach(h => {
             list.innerHTML += `
                 <div class="history-item">
@@ -205,58 +220,6 @@
         const d = new Date(); document.getElementById('date_receive').value = d.toISOString().split('T')[0];
         searchHistory();
     };
-</script>
-</body>
-</html>
-
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    </head>
-<body>
-    <script>
-    // --- 雲端設定區 ---
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxIGJhbS903H3fPdj4GSmX2-KwkjCP_ZWv676VqWnbddhw2EbvKHxQ3yqHRFGsAx4J9/exec'; 
-
-    // ... 承襲前面的 runCalc, addItem 邏輯 ...
-
-    async function processCheckout() {
-        if(cart.length === 0) return alert("報價單內沒有項目");
-        
-        const order = {
-            name: document.getElementById('cust_name').value || "未填",
-            phone: document.getElementById('cust_phone').value || "未填",
-            date: document.getElementById('date_receive').value,
-            total: document.getElementById('totalTxt').innerText,
-            items: cart
-        };
-
-        // 1. 本地存檔 (用於快速查詢)
-        let history = JSON.parse(localStorage.getItem('weray_history')) || [];
-        history.unshift(order);
-        localStorage.setItem('weray_history', JSON.stringify(history.slice(0, 100)));
-
-        // 2. 雲端同步 (用於檔案庫與多台設備共用)
-        try {
-            const response = await fetch(WEB_APP_URL, {
-                method: 'POST',
-                mode: 'no-cors', // 解決瀏覽器安全性限制
-                cache: 'no-cache',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(order)
-            });
-            alert("✅ 結案成功！資料已同步至雲端資料庫。");
-        } catch (error) {
-            console.error('雲端同步失敗:', error);
-            alert("⚠️ 本地已存檔，但雲端同步失敗，請檢查網路。");
-        }
-
-        document.getElementById('finalBtn').classList.add('hidden');
-        document.getElementById('resetBtn').classList.remove('hidden');
-        searchHistory();
-    }
-
-    // ... 承襲後續的 searchHistory 邏輯 ...
 </script>
 </body>
 </html>
