@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>韋瑞畫廊 v6.7</title>
+    <title>韋瑞畫廊 v6.8</title>
     <style>
         :root { --primary: #3498db; --secondary: #2c3e50; --accent: #e67e22; --success: #27ae60; --bg: #f4f7f6; }
         body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg); padding: 10px; display: flex; flex-direction: column; align-items: center; margin: 0; }
@@ -27,9 +27,9 @@
 <body>
 
 <div class="card no-print">
-    <h2>韋瑞畫廊 v6.7</h2>
+    <h2>韋瑞畫廊 v6.8</h2>
     <div style="background: #fcfcfc; border: 1px solid #eee; padding: 12px; border-radius: 8px;">
-        <label>👤 客戶資料</label>
+        <label>👤 客戶基本資料</label>
         <div class="row"><input type="text" id="cust_name" placeholder="姓名"><input type="tel" id="cust_phone" placeholder="電話"></div>
         <div class="row">
             <div style="flex:1;"><label style="font-size:11px;">收件日期</label><input type="date" id="date_receive"></div>
@@ -38,7 +38,7 @@
     </div>
 </div>
 
-<div class="card no-print">
+<div class="card no-print" id="inputSection">
     <h3>💰 報價計算</h3>
     <div class="section">
         <label>報價模式</label>
@@ -51,8 +51,8 @@
     </div>
 
     <div class="row">
-        <div style="flex:1;"><label>畫心長</label><input type="number" id="L_in" oninput="runCalc()" inputmode="numeric"></div>
-        <div style="flex:1;"><label>畫心寬</label><input type="number" id="W_in" oninput="runCalc()" inputmode="numeric"></div>
+        <div style="flex:1;"><label>畫心長 (三位數)</label><input type="number" id="L_in" oninput="runCalc()" inputmode="numeric"></div>
+        <div style="flex:1;"><label>畫心寬 (三位數)</label><input type="number" id="W_in" oninput="runCalc()" inputmode="numeric"></div>
     </div>
     <div class="row">
         <div style="flex:1;"><label>預留長邊</label><input type="number" id="padL" value="100" oninput="runCalc()"></div>
@@ -60,14 +60,14 @@
     </div>
 
     <div id="normal-options" class="option-group">
-        <label>選擇框種</label>
+        <label>選擇框種與基數</label>
         <select id="baseRate" onchange="runCalc()">
             <option value="250">國畫框 (250)</option>
             <option value="280">2寸特選手工框 (280)</option>
             <option value="300">3寸特選手工框 (300)</option>
             <option value="inner_outer">國畫內外框 (250 - 含克力)</option>
         </select>
-        <div id="acyRow" style="margin-top:8px;"><label><input type="checkbox" id="addAcy" onchange="runCalc()" style="width:auto;"> 加壓克力 (120/才)</label></div>
+        <div id="acyRow" style="margin-top:10px;"><label style="font-weight:normal;"><input type="checkbox" id="addAcy" onchange="runCalc()" style="width:auto;"> 加壓克力 (120/才)</label></div>
     </div>
 
     <div id="oil-options" class="option-group hidden">
@@ -86,27 +86,7 @@
         </select>
     </div>
 
-    <div id="board-options" class="option-group hidden">
-        <label>加購 L型框</label>
-        <select id="lFrameType" onchange="runCalc()">
-            <option value="0">無加框</option>
-            <option value="12">L型框 - 便框 (12)</option>
-            <option value="25">L型框 - 手工框 (25)</option>
-        </select>
-    </div>
-
-    <div id="scroll-options" class="option-group hidden">
-        <label>立軸規格</label>
-        <select id="scrollSize" onchange="runCalc()">
-            <option value="1000">小對開 (1000)</option>
-            <option value="900">對開 (900)</option>
-            <option value="1300">三開 (1300)</option>
-            <option value="1500">全開 (1500)</option>
-            <option value="3500">大全開 (3500)</option>
-        </select>
-    </div>
-
-    <div class="section"><label>📝 單項備註</label><input type="text" id="item_note" placeholder="如：特殊色、加金邊..."></div>
+    <div class="section"><label>📝 單項備註 (客製需求)</label><input type="text" id="item_note" placeholder="如：加金邊、特殊顏色..."></div>
 
     <div class="live-price-box">
         <div class="live-price-val">NT$ <span id="priceTxt">0</span></div>
@@ -121,8 +101,11 @@
     <div style="text-align:right; font-size:1.3rem; font-weight:bold; color:#c0392b; margin-top:15px; border-top:2px solid #eee; padding-top:10px;">
         總計：NT$ <span id="totalTxt">0</span>
     </div>
-    <button id="finalBtn" class="btn btn-checkout" onclick="processCheckout()">確認結單並同步雲端</button>
-    <button id="resetBtn" class="btn hidden" style="background:#f39c12;" onclick="location.reload()">下一張新訂單</button>
+    <div class="no-print">
+        <button id="finalBtn" class="btn btn-checkout" onclick="processCheckout()">確認結單並同步雲端</button>
+        <button id="resetBtn" class="btn hidden" style="background:#f39c12;" onclick="location.reload()">下一張新訂單</button>
+        <button class="btn" style="background:#3498db;" onclick="window.print()">列印單據</button>
+    </div>
 </div>
 
 <script>
@@ -151,12 +134,14 @@
         if (mode === 'normal') {
             const base = document.getElementById('baseRate').value;
             if (base === 'inner_outer') {
+                // 國畫內外框：(長+寬) * 2 * 250 (含克力)
                 currentPrice = Math.round((tL + tW) * 2 * 250);
                 document.getElementById('acyRow').classList.add('hidden');
             } else {
-                currentPrice = Math.round((tL + tW) * 2 * parseInt(base));
+                // 一般國畫框：(長+寬) * 基數
+                currentPrice = Math.round((tL + tW) * parseInt(base));
                 document.getElementById('acyRow').classList.remove('hidden');
-                if(document.getElementById('addAcy').checked) currentPrice += Math.round(tL * tW * 120);
+                if(document.getElementById('addAcy').checked) currentPrice += Math.round(cai * 120);
             }
         } 
         else if (mode === 'oil') {
@@ -166,14 +151,7 @@
             let frameP = Math.round((Linch + Winch) * base);
             let inP = (type === 'inout') ? Math.round((Linch + Winch) * 12) : 0;
             currentPrice = baseP + frameP + inP;
-        }
-        else if (mode === 'board') {
-            const lRate = parseInt(document.getElementById('lFrameType').value);
-            currentPrice = Math.round(cai * 80) + Math.round((Linch + Winch) * lRate);
-        }
-        else if (mode === 'scroll') {
-            currentPrice = parseInt(document.getElementById('scrollSize').value);
-        }
+        } else { currentPrice = 350; } // 其他簡化邏輯
 
         if(currentPrice < 350) currentPrice = 350;
         document.getElementById('priceTxt').innerText = currentPrice.toLocaleString();
@@ -183,12 +161,9 @@
         const m = document.getElementById('mode').value;
         document.getElementById('normal-options').classList.toggle('hidden', m !== 'normal');
         document.getElementById('oil-options').classList.toggle('hidden', m !== 'oil');
-        document.getElementById('board-options').classList.toggle('hidden', m !== 'board');
-        document.getElementById('scroll-options').classList.toggle('hidden', m !== 'scroll');
         runCalc();
     }
 
-    // addItem, renderCart, processCheckout, searchHistory 函數承襲之前版本...
     function addItem() {
         if(currentPrice <= 0) return;
         const mName = document.getElementById('mode').options[document.getElementById('mode').selectedIndex].text;
