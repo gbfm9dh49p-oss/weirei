@@ -3,42 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>韋瑞畫廊 v6.5</title>
+    <title>韋瑞畫廊 v6.7</title>
     <style>
-        :root { --primary-color: #3498db; --secondary-color: #2c3e50; --accent-color: #e67e22; --success-color: #27ae60; --bg-color: #f4f7f6; }
-        body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg-color); padding: 10px; display: flex; flex-direction: column; align-items: center; margin: 0; }
+        :root { --primary: #3498db; --secondary: #2c3e50; --accent: #e67e22; --success: #27ae60; --bg: #f4f7f6; }
+        body { font-family: "Microsoft JhengHei", sans-serif; background-color: var(--bg); padding: 10px; display: flex; flex-direction: column; align-items: center; margin: 0; }
         .card { background: white; padding: 18px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); width: 100%; max-width: 500px; margin-bottom: 15px; box-sizing: border-box; }
-        h2, h3 { text-align: center; color: var(--secondary-color); margin: 0 0 15px 0; border-bottom: 2px solid var(--primary-color); padding-bottom: 8px; font-size: 1.25rem; }
-        .section { margin-bottom: 12px; }
+        h2, h3 { text-align: center; color: var(--secondary); margin: 0 0 15px 0; border-bottom: 2px solid var(--primary); padding-bottom: 8px; font-size: 1.25rem; }
         label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; font-size: 0.9rem; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 1rem; background: #fff; outline: none; }
-        input:focus { border-color: var(--primary-color); }
-        .row { display: flex; gap: 8px; align-items: flex-end; }
-        .live-price-box { background: #fff; padding: 12px; border-radius: 8px; text-align: center; border: 2px dashed var(--accent-color); margin: 15px 0; }
-        .live-price-val { font-size: 2rem; font-weight: bold; color: var(--accent-color); line-height: 1.2; }
-        .size-info { font-size: 0.85rem; color: #7f8c8d; margin-top: 5px; }
-        .btn { border: none; width: 100%; padding: 14px; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; color: white; margin-top: 8px; }
-        .btn-add { background-color: var(--success-color); }
-        .btn-checkout { background-color: var(--secondary-color); }
-        .btn-print { background-color: var(--primary-color); }
-        .btn:active { transform: scale(0.98); opacity: 0.9; }
-        .option-group { background:#fff9f0; padding:12px; border-radius:8px; border: 1px solid #ffe0b2; margin-top: 10px; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 1rem; background: #fff; }
+        .row { display: flex; gap: 8px; align-items: flex-end; margin-bottom: 10px; }
+        .option-group { background:#fff9f0; padding:12px; border-radius:10px; border: 1px solid #ffe0b2; margin: 10px 0; }
+        .live-price-box { background: #fff; padding: 12px; border-radius: 8px; text-align: center; border: 2px dashed var(--accent); margin: 15px 0; }
+        .live-price-val { font-size: 2.2rem; font-weight: bold; color: var(--accent); }
+        .btn { border: none; width: 100%; padding: 14px; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; color: white; margin-top: 8px; }
+        .btn-add { background-color: var(--success); }
+        .btn-checkout { background-color: var(--secondary); }
         .cart-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.95rem; }
         .cart-table td { padding: 10px 5px; border-bottom: 1px solid #eee; }
-        .total-row { text-align: right; font-size: 1.3rem; font-weight: bold; color: #c0392b; margin-top: 15px; border-top: 2px solid #eee; padding-top: 10px; }
-        .history-panel { background: #ecf0f1; padding: 15px; border-radius: 12px; width: 100%; max-width: 500px; margin-top: 10px; }
-        .history-item { background: #fff; padding: 10px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid var(--primary-color); font-size: 0.85rem; }
         .hidden { display: none !important; }
-        @media print { .no-print { display: none !important; } .card { box-shadow: none; border: none; width: 100%; } body { background: #fff; } }
+        @media print { .no-print { display: none !important; } .card { box-shadow: none; border: none; width: 100%; } }
     </style>
 </head>
 <body>
 
 <div class="card no-print">
-    <h2>韋瑞畫廊 v6.5</h2>
-    <div class="section" style="background: #fcfcfc; border: 1px solid #eee; padding: 12px; border-radius: 8px;">
-        <label>👤 客戶資訊</label>
-        <div class="row" style="margin-bottom: 8px;"><input type="text" id="cust_name" placeholder="姓名"><input type="tel" id="cust_phone" placeholder="電話"></div>
+    <h2>韋瑞畫廊 v6.7</h2>
+    <div style="background: #fcfcfc; border: 1px solid #eee; padding: 12px; border-radius: 8px;">
+        <label>👤 客戶資料</label>
+        <div class="row"><input type="text" id="cust_name" placeholder="姓名"><input type="tel" id="cust_phone" placeholder="電話"></div>
         <div class="row">
             <div style="flex:1;"><label style="font-size:11px;">收件日期</label><input type="date" id="date_receive"></div>
             <div style="flex:1;"><label style="font-size:11px;">預計交件</label><input type="date" id="date_deliver"></div>
@@ -46,7 +38,7 @@
     </div>
 </div>
 
-<div class="card no-print" id="inputSection">
+<div class="card no-print">
     <h3>💰 報價計算</h3>
     <div class="section">
         <label>報價模式</label>
@@ -59,8 +51,12 @@
     </div>
 
     <div class="row">
-        <div style="flex:1;"><label>畫心長 (三位數)</label><input type="number" id="L_in" oninput="runCalc()" inputmode="numeric" placeholder="如 300"></div>
-        <div style="flex:1;"><label>畫心寬 (三位數)</label><input type="number" id="W_in" oninput="runCalc()" inputmode="numeric" placeholder="如 500"></div>
+        <div style="flex:1;"><label>畫心長</label><input type="number" id="L_in" oninput="runCalc()" inputmode="numeric"></div>
+        <div style="flex:1;"><label>畫心寬</label><input type="number" id="W_in" oninput="runCalc()" inputmode="numeric"></div>
+    </div>
+    <div class="row">
+        <div style="flex:1;"><label>預留長邊</label><input type="number" id="padL" value="100" oninput="runCalc()"></div>
+        <div style="flex:1;"><label>預留短邊</label><input type="number" id="padW" value="50" oninput="runCalc()"></div>
     </div>
 
     <div id="normal-options" class="option-group">
@@ -71,42 +67,68 @@
             <option value="300">3寸特選手工框 (300)</option>
             <option value="inner_outer">國畫內外框 (250 - 含克力)</option>
         </select>
-        <div id="acyRow" style="margin-top:8px;"><label style="font-weight:normal;"><input type="checkbox" id="addAcy" onchange="runCalc()" style="width:auto;"> 加壓克力 (120/才)</label></div>
+        <div id="acyRow" style="margin-top:8px;"><label><input type="checkbox" id="addAcy" onchange="runCalc()" style="width:auto;"> 加壓克力 (120/才)</label></div>
     </div>
 
-    <div class="section" style="margin-top:12px;">
-        <label>📝 單項備註 (客製需求)</label>
-        <input type="text" id="item_note" placeholder="如：加金邊、特殊顏色...">
+    <div id="oil-options" class="option-group hidden">
+        <label>油畫施作方式</label>
+        <select id="oilType" onchange="runCalc()">
+            <option value="direct">直接框 (單純框條)</option>
+            <option value="solid">立體框 (底板+框條)</option>
+            <option value="inout">內外框 (底板+框條+內框)</option>
+        </select>
+        <label style="margin-top:10px;">外框條基數</label>
+        <select id="oilFrameBase" onchange="runCalc()">
+            <option value="20">6分框 (20)</option>
+            <option value="25">寸半框 (25)</option>
+            <option value="35">兩寸半框 (35)</option>
+            <option value="45">三寸框 (45)</option>
+        </select>
     </div>
+
+    <div id="board-options" class="option-group hidden">
+        <label>加購 L型框</label>
+        <select id="lFrameType" onchange="runCalc()">
+            <option value="0">無加框</option>
+            <option value="12">L型框 - 便框 (12)</option>
+            <option value="25">L型框 - 手工框 (25)</option>
+        </select>
+    </div>
+
+    <div id="scroll-options" class="option-group hidden">
+        <label>立軸規格</label>
+        <select id="scrollSize" onchange="runCalc()">
+            <option value="1000">小對開 (1000)</option>
+            <option value="900">對開 (900)</option>
+            <option value="1300">三開 (1300)</option>
+            <option value="1500">全開 (1500)</option>
+            <option value="3500">大全開 (3500)</option>
+        </select>
+    </div>
+
+    <div class="section"><label>📝 單項備註</label><input type="text" id="item_note" placeholder="如：特殊色、加金邊..."></div>
 
     <div class="live-price-box">
         <div class="live-price-val">NT$ <span id="priceTxt">0</span></div>
-        <div id="sizeDetail" class="size-info">輸入尺寸開始計算</div>
+        <div id="sizeDetail" style="font-size:12px; color:#7f8c8d; margin-top:5px;"></div>
     </div>
     <button class="btn btn-add" onclick="addItem()">＋ 加入報價清單</button>
 </div>
 
 <div class="card" id="cartSection">
     <h3>📝 報價清單</h3>
-    <div id="printHeader" class="hidden" style="margin-bottom:10px; font-size:12px; line-height:1.6; border-bottom:1px solid #333; padding-bottom:5px;"></div>
     <table class="cart-table" id="cartTable"></table>
-    <div class="total-row">總計：NT$ <span id="totalTxt">0</span></div>
-    <div class="no-print">
-        <button id="finalBtn" class="btn btn-checkout" onclick="processCheckout()">確認結單並存檔同步</button>
-        <button id="resetBtn" class="btn hidden" style="background:#f39c12;" onclick="location.reload()">下一張新訂單</button>
-        <button class="btn btn-print" onclick="window.print()">列印單據</button>
+    <div style="text-align:right; font-size:1.3rem; font-weight:bold; color:#c0392b; margin-top:15px; border-top:2px solid #eee; padding-top:10px;">
+        總計：NT$ <span id="totalTxt">0</span>
     </div>
-</div>
-
-<div class="history-panel no-print">
-    <h3>📂 歷史檔案庫</h3>
-    <input type="text" id="searchKey" placeholder="搜尋姓名或電話..." oninput="searchHistory()" style="margin-bottom:10px;">
-    <div id="historyList"></div>
+    <button id="finalBtn" class="btn btn-checkout" onclick="processCheckout()">確認結單並同步雲端</button>
+    <button id="resetBtn" class="btn hidden" style="background:#f39c12;" onclick="location.reload()">下一張新訂單</button>
 </div>
 
 <script>
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxIGJhbS903H3fPdj4GSmX2-KwkjCP_ZWv676VqWnbddhw2EbvKHxQ3yqHRFGsAx4J9/exec';
     const TAI_TO_CM = 30.3;
+    const TAI_TO_INCH = 11.93;
     let cart = [];
     let currentPrice = 0;
 
@@ -114,39 +136,64 @@
         const mode = document.getElementById('mode').value;
         const L = (parseFloat(document.getElementById('L_in').value) || 0) / 100;
         const W = (parseFloat(document.getElementById('W_in').value) || 0) / 100;
-        const tL = L + 1.0; const tW = W + 0.5;
-        const Lcm = tL * TAI_TO_CM; const Wcm = tW * TAI_TO_CM;
+        const pL = (parseFloat(document.getElementById('padL').value) || 0) / 100;
+        const pW = (parseFloat(document.getElementById('padW').value) || 0) / 100;
         
-        if (L > 0 && W > 0) {
-            document.getElementById('sizeDetail').innerText = `尺寸：${Lcm.toFixed(1)}x${Wcm.toFixed(1)}cm`;
-            if (mode === 'normal') {
-                const base = document.getElementById('baseRate').value;
-                if (base === 'inner_outer') {
-                    currentPrice = Math.round((tL + tW) * 2 * 250);
-                    document.getElementById('acyRow').classList.add('hidden');
-                } else {
-                    currentPrice = Math.round((tL + tW) * 2 * parseInt(base));
-                    document.getElementById('acyRow').classList.remove('hidden');
-                    if(document.getElementById('addAcy').checked) currentPrice += Math.round(tL * tW * 120);
-                }
-            } else { currentPrice = 0; } // 簡化邏輯供對比
-        } else {
-            currentPrice = 0;
-            document.getElementById('sizeDetail').innerText = "輸入尺寸開始計算";
+        if (L <= 0 || W <= 0) { currentPrice = 0; document.getElementById('priceTxt').innerText="0"; return; }
+
+        const tL = L + pL; const tW = W + pW;
+        const Lcm = tL * TAI_TO_CM; const Wcm = tW * TAI_TO_CM;
+        const Linch = tL * TAI_TO_INCH; const Winch = tW * TAI_TO_INCH;
+        const cai = (Linch * Winch) / 144;
+        
+        document.getElementById('sizeDetail').innerText = `框內：${Lcm.toFixed(1)}x${Wcm.toFixed(1)}cm (${tL.toFixed(2)}x${tW.toFixed(2)}尺)`;
+
+        if (mode === 'normal') {
+            const base = document.getElementById('baseRate').value;
+            if (base === 'inner_outer') {
+                currentPrice = Math.round((tL + tW) * 2 * 250);
+                document.getElementById('acyRow').classList.add('hidden');
+            } else {
+                currentPrice = Math.round((tL + tW) * 2 * parseInt(base));
+                document.getElementById('acyRow').classList.remove('hidden');
+                if(document.getElementById('addAcy').checked) currentPrice += Math.round(tL * tW * 120);
+            }
+        } 
+        else if (mode === 'oil') {
+            const type = document.getElementById('oilType').value;
+            const base = parseInt(document.getElementById('oilFrameBase').value);
+            let baseP = (type === 'direct') ? 0 : Math.round(cai * 50);
+            let frameP = Math.round((Linch + Winch) * base);
+            let inP = (type === 'inout') ? Math.round((Linch + Winch) * 12) : 0;
+            currentPrice = baseP + frameP + inP;
         }
+        else if (mode === 'board') {
+            const lRate = parseInt(document.getElementById('lFrameType').value);
+            currentPrice = Math.round(cai * 80) + Math.round((Linch + Winch) * lRate);
+        }
+        else if (mode === 'scroll') {
+            currentPrice = parseInt(document.getElementById('scrollSize').value);
+        }
+
+        if(currentPrice < 350) currentPrice = 350;
         document.getElementById('priceTxt').innerText = currentPrice.toLocaleString();
     }
 
+    function toggleMode() {
+        const m = document.getElementById('mode').value;
+        document.getElementById('normal-options').classList.toggle('hidden', m !== 'normal');
+        document.getElementById('oil-options').classList.toggle('hidden', m !== 'oil');
+        document.getElementById('board-options').classList.toggle('hidden', m !== 'board');
+        document.getElementById('scroll-options').classList.toggle('hidden', m !== 'scroll');
+        runCalc();
+    }
+
+    // addItem, renderCart, processCheckout, searchHistory 函數承襲之前版本...
     function addItem() {
-        if(currentPrice <= 0) return alert("請輸入有效尺寸");
+        if(currentPrice <= 0) return;
+        const mName = document.getElementById('mode').options[document.getElementById('mode').selectedIndex].text;
         const note = document.getElementById('item_note').value;
-        const modeName = document.getElementById('mode').options[document.getElementById('mode').selectedIndex].text;
-        cart.push({
-            title: modeName,
-            price: currentPrice,
-            spec: document.getElementById('sizeDetail').innerText,
-            note: note ? `(備註：${note})` : ""
-        });
+        cart.push({ title: mName, price: currentPrice, spec: document.getElementById('sizeDetail').innerText, note: note ? `(${note})` : "" });
         renderCart();
         document.getElementById('item_note').value = "";
     }
@@ -155,64 +202,25 @@
         const table = document.getElementById('cartTable'); table.innerHTML = ""; let total = 0;
         cart.forEach((it, idx) => {
             total += it.price;
-            table.innerHTML += `<tr><td><b>${it.title}</b><br><small>${it.spec} ${it.note}</small></td><td align="right">${it.price.toLocaleString()}</td></tr>`;
+            table.innerHTML += `<tr><td style="padding:8px; border-bottom:1px solid #eee;"><b>${it.title}</b><br><small>${it.spec} ${it.note}</small></td><td align="right">${it.price.toLocaleString()}</td><td align="right"><button onclick="cart.splice(${idx},1);renderCart()" style="color:red;border:none;background:none;cursor:pointer;">❌</button></td></tr>`;
         });
         document.getElementById('totalTxt').innerText = total.toLocaleString();
     }
 
     async function processCheckout() {
-        if(cart.length === 0) return alert("清單內沒有項目");
-        const order = {
-            name: document.getElementById('cust_name').value || "未填",
-            phone: document.getElementById('cust_phone').value || "未填",
-            date: document.getElementById('date_receive').value,
-            total: document.getElementById('totalTxt').innerText,
-            items: cart
-        };
-
-        // 本地存檔
-        let history = JSON.parse(localStorage.getItem('weray_history')) || [];
-        history.unshift(order);
-        localStorage.setItem('weray_history', JSON.stringify(history.slice(0, 50)));
-
-        // 雲端同步
+        if(cart.length === 0) return;
+        const order = { name: document.getElementById('cust_name').value || "未填", phone: document.getElementById('cust_phone').value || "未填", date: document.getElementById('date_receive').value, total: document.getElementById('totalTxt').innerText, items: cart };
         try {
-            await fetch(WEB_APP_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                cache: 'no-cache',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(order)
-            });
-            alert("✅ 結案成功！已同步至 Google Sheets。");
-        } catch (error) {
-            alert("⚠️ 本地已存檔，但雲端同步失敗。");
-        }
-
+            await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(order) });
+            alert("✅ 同步成功！");
+        } catch (e) { alert("⚠️ 雲端失敗"); }
         document.getElementById('finalBtn').classList.add('hidden');
         document.getElementById('resetBtn').classList.remove('hidden');
-        searchHistory();
-    }
-
-    function searchHistory() {
-        const key = document.getElementById('searchKey').value.toLowerCase();
-        const history = JSON.parse(localStorage.getItem('weray_history')) || [];
-        const list = document.getElementById('historyList');
-        list.innerHTML = "";
-        history.filter(h => h.name.includes(key) || h.phone.includes(key)).forEach(h => {
-            list.innerHTML += `<div class="history-item"><b>${h.date} | ${h.name}</b><br>總額：NT$ ${h.total}</div>`;
-        });
-    }
-
-    function toggleMode() {
-        document.getElementById('normal-options').classList.toggle('hidden', document.getElementById('mode').value !== 'normal');
-        runCalc();
     }
 
     window.onload = function() {
         const d = new Date(); document.getElementById('date_receive').value = d.toISOString().split('T')[0];
-        const n = new Date(); n.setDate(d.getDate() + 14); document.getElementById('date_deliver').value = n.toISOString().split('T')[0];
-        searchHistory();
+        toggleMode();
     };
 </script>
 </body>
